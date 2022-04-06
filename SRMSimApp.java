@@ -275,15 +275,12 @@ public class SRMSimApp extends Application {
                 System.out.println("Exception");
                 StringBuilder errorStringBuilder = new StringBuilder("Sim could not run with current config\n\n");
                 if (Objects.isNull(propellant)) {
-                    System.out.println("Propellant Necessary for Simulation");
                     errorStringBuilder.append("Propellant Necessary for Simulation\n\n");
                 }
                 if (Objects.isNull(nozzle)) {
-                    System.out.println("Nozzle Necessary for Simulation");
                     errorStringBuilder.append("Nozzle Necessary for Simulation\n\n");
                 }
                 if (Objects.isNull(grains)) {
-                    System.out.println("Grains Necessary for Simulation");
                     errorStringBuilder.append("Grains Necessary for Simulation\n\n");
                 }
                 // Exception Initialize

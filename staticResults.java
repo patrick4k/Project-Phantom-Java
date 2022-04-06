@@ -3,6 +3,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -26,13 +27,13 @@ public class staticResults {
         evaluateMotor();
 
         staticResultsTitle = new Label("Thats a lot of power!");
-        maxThrustLabel = new Label("Max Thrust = " + maxThrust + " " + motor.getThrustUnits());
-        maxChamberPressureLabel = new Label("Max Chamber Pressure = " + maxChamberPressure + " " + motor.getPressureUnits());
-        burnTimeLabel = new Label("Burn Time = " + burnTime + " s");
-        ispLabel = new Label("ISP = " + motor.getISP() + " " + motor.getTimeUnits());
-        cStarLabel = new Label("C* = " + cStar + " " + motor.getVelocityUnits());
-        initialKnLabel = new Label("Initial Kn = " + initalKn);
-        maxKnLabel = new Label("Max Kn = " + maxKn);
+        maxThrustLabel = new Label("Max Thrust = " + roundToSigFigs(maxThrust, 6) + " " + motor.getThrustUnits());
+        maxChamberPressureLabel = new Label("Max Chamber Pressure = " + roundToSigFigs(maxChamberPressure,5) + " " + motor.getPressureUnits());
+        burnTimeLabel = new Label("Burn Time = " + roundToSigFigs(burnTime,6) + " s");
+        ispLabel = new Label("ISP = " + roundToSigFigs(motor.getISP(), 6) + " " + motor.getTimeUnits());
+        cStarLabel = new Label("C* = " + roundToSigFigs(cStar, 6) + " " + motor.getVelocityUnits());
+        initialKnLabel = new Label("Initial Kn = " + roundToSigFigs(initalKn, 6));
+        maxKnLabel = new Label("Max Kn = " + roundToSigFigs(maxKn, 6));
 
         staticResultsTitle.setFont(new Font("Comic Sans MS", 20));
 
@@ -65,6 +66,47 @@ public class staticResults {
         cStar = motor.getcStar();
         initalKn = motor.getKnList().get(1);
         maxKn = Collections.max(motor.getKnList());
+    }
+
+    public String roundToSigFigs(double value, int sigFigs) {
+        double numPlace = 1;
+        double newValue = 0;
+        StringBuilder deciPattern = new StringBuilder("");
+        if (value == 1) {
+            deciPattern.append("0.0");
+            newValue =  1;
+        }
+        else if (value == 0){
+            deciPattern.append("0.0");
+            newValue =  0.0;
+        }
+        else if (value > 1) {
+            while (!(((value/numPlace) > 1) && ((value/numPlace) < 10))) {
+                numPlace*=10;
+            }
+            for (int i = 0; i < (Math.log10(numPlace)); i++) {
+                deciPattern.append("0");
+            }
+            if (sigFigs > 1 + (Math.log10(numPlace))) {
+                deciPattern.append(".");
+                for (int i = 0; i < sigFigs - 1 - (Math.log10(numPlace)); i++) {
+                    deciPattern.append("0");
+                }
+            }
+            newValue =  Math.pow(10,-sigFigs+1)*numPlace*Math.round((value/numPlace)*Math.pow(10,sigFigs-1));
+        }
+        else {
+            deciPattern.append("0.");
+            while (!(((value/numPlace) > 1) && ((value/numPlace) < 10))) {
+                numPlace/=10;
+            }
+            for (int i = 0; i < (sigFigs - 1 + Math.log10(1/numPlace)); i++) {
+                deciPattern.append("0");
+            }
+            newValue = (Math.pow(10,-sigFigs+1)*numPlace*Math.round((value/numPlace)*Math.pow(10,sigFigs-1)));
+        }
+        DecimalFormat decimalFormat = new DecimalFormat(deciPattern.toString());
+        return decimalFormat.format(newValue);
     }
 
     public Pane getStaticResultsPane() {
