@@ -1,3 +1,16 @@
+/*
+Name: Patrick kennedy
+Date: 4/6/22
+SRMSim Application file
+
+This file creates and pieces together the SRMSim Application
+In SRMSimApp.java:
+ - The main pane for motor setup and design is created
+ - The menu bar and features are set up
+ - The simulation can be ran
+
+ SRMSimApp.java creates new panes and commits these panes to the borderPane using other classes
+ */
 import javafx.application.Application;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
