@@ -115,28 +115,38 @@ public class test {
         testNozzle.setThroatDiameter(0.009525);
         return testNozzle;
     }
-    public static ArrayList<Grain> loadPresetGrains() {
-        // Grain (Tubular)
-        Tubular testGrain1 = new Tubular();
-        testGrain1.setGrainLength(0.12065);
-        testGrain1.setInnerDiameter(0.015875);
-        testGrain1.setOuterDiameter(0.04445);
-        testGrain1.setInhibitedEnds(2);
-
+    public static ArrayList<Grain> loadPresetCross() {
         // Grain (Cross)
-        Cross testGrain2 = new Cross();
-        testGrain2.setGrainLength(0.12065);
-        testGrain2.setWidth(0.04445/10);
-        testGrain2.setLength((0.04445/2) - 0.001);
-        testGrain2.setInhibitedEnds(2);
-        testGrain2.setOuterDiameter(0.04445);
+        Cross testGrain = new Cross();
+        testGrain.setGrainLength(0.12065);
+        testGrain.setWidth(0.04445/10);
+        testGrain.setLength((0.04445/2) - 0.001);
+        testGrain.setInhibitedEnds(2);
+        testGrain.setOuterDiameter(0.04445);
 
         // Add grains into grain list (2 identical grains in this test motor)
         ArrayList<Grain> testGrainList = new ArrayList<Grain>();
-        testGrainList.add(testGrain2);
-        testGrainList.add(testGrain2);
-        testGrainList.add(testGrain2);
-        testGrainList.add(testGrain2);
+        testGrainList.add(testGrain);
+        testGrainList.add(testGrain);
+        testGrainList.add(testGrain);
+        testGrainList.add(testGrain);
+
+        return testGrainList;
+    }
+    public static ArrayList<Grain> loadPresetBates() {
+        // Grain (Tubular)
+        Tubular testGrain = new Tubular();
+        testGrain.setGrainLength(0.12065);
+        testGrain.setInnerDiameter(0.015875);
+        testGrain.setOuterDiameter(0.04445);
+        testGrain.setInhibitedEnds(2);
+
+        // Add grains into grain list (2 identical grains in this test motor)
+        ArrayList<Grain> testGrainList = new ArrayList<Grain>();
+        testGrainList.add(testGrain);
+        testGrainList.add(testGrain);
+        testGrainList.add(testGrain);
+        testGrainList.add(testGrain);
 
         return testGrainList;
     }

@@ -13,10 +13,12 @@ In SRMSimApp.java:
  */
 import javafx.application.Application;
 import javafx.scene.control.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -35,9 +37,9 @@ public class SRMSimApp extends Application {
     private Pane staticResultsPane;
 
     // Menu Bar
-    private final MenuItem closeMI, loadPresetPropMI,loadPresetNozMI, loadPresetGrainMI;
+    private final MenuItem closeMI, loadPresetPropMI,loadPresetNozMI, loadPresetCrossMI, loadPresetBatesMI, loadAllPreset;
     private final RadioMenuItem engUnitToggle;
-    private final Menu fileMenu, optionsMenu, helpMenu;
+    private final Menu fileMenu, optionsMenu, loadPresetGrainSubMenu, helpMenu;
     private final MenuBar mainMenu;
 
     // Buttons
@@ -45,6 +47,13 @@ public class SRMSimApp extends Application {
     private final Button backToMainPaneButton;
     private final Button viewStaticButton;
     private final Button backToPlotButton;
+
+    // Exceptions
+    //private final Label propExcepLabel, nozzExceptLabel, grainExcepLabel;
+    private Label testExcepLabel;
+    private BorderPane exceptionBorder;
+    private Stage exceptionStage;
+    private Pane exceptionPane;
 
     // Choice Boxes
     private final ChoiceBox<String> plotSelect;
@@ -63,17 +72,20 @@ public class SRMSimApp extends Application {
         paneWidth = 750;
         paneHeight = 600;
 
+        // Menu bar setup
         closeMI = new MenuItem("Close Sim");
         loadPresetPropMI = new MenuItem("Load Preset Propellant");
         loadPresetNozMI = new MenuItem("Load Preset Nozzle");
-        loadPresetGrainMI = new MenuItem("Load Preset Grain");
-        
+        loadPresetBatesMI = new MenuItem("BATES Config");
+        loadPresetCrossMI = new MenuItem("Cross Config");
+        loadAllPreset = new MenuItem("Load Random Preset Motor");
+        loadPresetGrainSubMenu = new Menu("Load Preset Grain");
+        loadPresetGrainSubMenu.getItems().addAll(loadPresetCrossMI, loadPresetBatesMI);
         engUnitToggle = new RadioMenuItem("English Units");
-
         fileMenu = new Menu("File");
         fileMenu.getItems().addAll(closeMI);
         optionsMenu = new Menu("Options");
-        optionsMenu.getItems().addAll(engUnitToggle, loadPresetPropMI, loadPresetNozMI, loadPresetGrainMI);
+        optionsMenu.getItems().addAll(engUnitToggle, loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
         helpMenu = new Menu("Help");
         mainMenu = new MenuBar(fileMenu, optionsMenu, helpMenu);
 
@@ -82,6 +94,17 @@ public class SRMSimApp extends Application {
         runSimButton.setLayoutX((56.0/75)*paneWidth);
         runSimButton.setLayoutY(paneHeight-67.5);
 
+        // Exception setup
+        exceptionBorder = new BorderPane();
+        exceptionStage = new Stage();
+        exceptionPane = new Pane();
+        exceptionBorder.setCenter(exceptionPane);
+        Scene exceptionScene = new Scene(exceptionBorder, 0.35*paneWidth, 0.3*paneHeight);
+        exceptionStage.setScene(exceptionScene);
+        exceptionStage.setResizable(false);
+        exceptionStage.setTitle("ERROR");
+
+        // Button setup
         backToMainPaneButton = new Button("Back");
         backToMainPaneButton.setLayoutX(10.0);
         backToMainPaneButton.setLayoutY(10.0);
@@ -99,14 +122,6 @@ public class SRMSimApp extends Application {
         plotSelect.getItems().addAll("Thrust vs Time","Chamber Pressure vs Time","Mass Flow vs Time", "Mass Ejected vs Time", "Mass Flux vs Time", "Burn Area vs Time", "Burn Area vs Regression", "Kn vs Time", "Regression Rate vs Time", "Regression vs Time", "Regression Rate vs Chamber Pressure", "Exit Pressure vs Time", "Force Coefficient vs Time", "Free Volume vs Time", "Volume Loading vs Time");
         plotSelect.setLayoutX(0.25*paneWidth);
         plotSelect.setLayoutY(0.25*paneHeight - 35);
-    }
-
-    // Assign values to motor
-    public void initMotor() {
-        /* TODO add GUI to add values to initMotor() method*/
-        test test = new test();
-        this.motor = test.initMotor();
-        this.motor.setSIUnits(!engUnitToggle.isSelected());
     }
 
     public void assesPlotSelect() {
@@ -206,13 +221,6 @@ public class SRMSimApp extends Application {
         updatePlotPane(xArr,yArr,plotSelected, xAxisTitle, yAxisTitle);
     }
 
-    public void assesStaticResults() {
-        staticResults staticResults = new staticResults(motor, paneHeight, paneWidth);
-        staticResultsPane = staticResults.getStaticResultsPane();
-        staticResultsPane.getChildren().add(backToPlotButton);
-        borderPane.setCenter(staticResultsPane);
-    }
-
     public void updatePlotPane(ArrayList<Double> xArr, ArrayList<Double> yArr, String plotTitleText, String xAxisTitle, String yAxisTitle) {
         if (xArr.size() == yArr.size()) {
             plotArrayList plot = new plotArrayList(xArr,yArr,paneHeight,paneWidth, xAxisTitle, yAxisTitle);
@@ -223,6 +231,24 @@ public class SRMSimApp extends Application {
         }
         else {
             System.out.println("ERR NO SIZE MATCH");
+        }
+    }
+
+    public void assesStaticResults() {
+        staticResults staticResults = new staticResults(motor, paneHeight, paneWidth);
+        staticResultsPane = staticResults.getStaticResultsPane();
+        staticResultsPane.getChildren().add(backToPlotButton);
+        borderPane.setCenter(staticResultsPane);
+    }
+
+    public void changeMenuBar(boolean fromHomePane) {
+        if (fromHomePane) {
+            /* TODO Add file I/O here */
+            optionsMenu.getItems().removeAll(loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
+            optionsMenu.fire();
+        }
+        else if (!(optionsMenu.getItems().contains(loadPresetPropMI) && optionsMenu.getItems().contains(loadPresetNozMI) && optionsMenu.getItems().contains(loadPresetGrainSubMenu) && optionsMenu.getItems().contains(loadAllPreset))) { // to home pane
+            optionsMenu.getItems().addAll(loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
         }
     }
 
@@ -239,23 +265,34 @@ public class SRMSimApp extends Application {
             this.motor = new Motor(propellant,nozzle,grains);
             try {
                 this.motor.runSim();
+                changeMenuBar(true);
                 simCompleted = true;
                 if (engUnitToggle.isSelected()) {
                     motor.convertResult(true);
                 }
                 updatePlotPane(motor.getTimeList(),motor.getThrustList(), "Thrust vs Time", motor.getTimeUnits(), motor.getThrustUnits());
             } catch (Exception e) {
-                /* TODO Add exception; notify user that motor is null */
                 System.out.println("Exception");
+                StringBuilder errorStringBuilder = new StringBuilder("Sim could not run with current config\n\n");
                 if (Objects.isNull(propellant)) {
-                    System.out.println("Prop Exception");
+                    System.out.println("Propellant Necessary for Simulation");
+                    errorStringBuilder.append("Propellant Necessary for Simulation\n\n");
                 }
                 if (Objects.isNull(nozzle)) {
-                    System.out.println("Nozzle Exception");
+                    System.out.println("Nozzle Necessary for Simulation");
+                    errorStringBuilder.append("Nozzle Necessary for Simulation\n\n");
                 }
                 if (Objects.isNull(grains)) {
-                    System.out.println("No grains added");
+                    System.out.println("Grains Necessary for Simulation");
+                    errorStringBuilder.append("Grains Necessary for Simulation\n\n");
                 }
+                // Exception Initialize
+                testExcepLabel = new Label(errorStringBuilder.toString());
+                testExcepLabel.setFont(new Font(14));
+                exceptionStage.close();
+                exceptionPane.getChildren().clear();
+                exceptionPane.getChildren().add(testExcepLabel);
+                exceptionStage.show();
             }
         });
 
@@ -263,6 +300,7 @@ public class SRMSimApp extends Application {
         backToMainPaneButton.setOnMouseClicked(event -> {
             simCompleted = false;
             borderPane.setCenter(homePane);
+            changeMenuBar(false);
         });
 
         // Update plotPane when new plot is selected
@@ -301,10 +339,26 @@ public class SRMSimApp extends Application {
         loadPresetNozMI.setOnAction(event -> {
             this.nozzle = test.loadPresetNozzle();
         });
-
-        loadPresetGrainMI.setOnAction(event -> {
-            this.grains = test.loadPresetGrains();
+        // Load Preset for cross grain
+        loadPresetCrossMI.setOnAction(event -> {
+            this.grains = test.loadPresetCross();
         });
+        // Load Preset for BATES grain
+        loadPresetBatesMI.setOnAction((event -> {
+            this.grains = test.loadPresetBates();
+        }));
+
+        // Load All Presets
+        loadAllPreset.setOnAction((event -> {
+            this.propellant = test.loadPresetPropellant();
+            this.nozzle = test.loadPresetNozzle();
+            if (Math.random() > 0.5) {
+                this.grains = test.loadPresetBates();
+            }
+            else {
+                this.grains = test.loadPresetCross();
+            }
+        }));
 
     }
 
