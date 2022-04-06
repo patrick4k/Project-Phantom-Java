@@ -24,7 +24,7 @@ public class SRMSimApp extends Application {
     // Motor for Sim
     private Propellant propellant;
     private Nozzle nozzle;
-    private Grain[] grains;
+    private ArrayList<Grain> grains;
     private Motor motor;
     private boolean simCompleted = false;
 
@@ -55,6 +55,11 @@ public class SRMSimApp extends Application {
 
     // Constructor
     public SRMSimApp() {
+        /*
+        propellant = new Propellant();
+        nozzle = new Nozzle();
+        grains = new ArrayList<>();
+        */
         paneWidth = 750;
         paneHeight = 600;
 
@@ -230,13 +235,28 @@ public class SRMSimApp extends Application {
         // Run sim with inputted motor
         /* TODO Add error handling */
         runSimButton.setOnMouseClicked(event -> {
-            initMotor();
-            this.motor.runSim();
-            simCompleted = true;
-            if (engUnitToggle.isSelected()) {
-                motor.convertResult(true);
+            //initMotor();
+            this.motor = new Motor(propellant,nozzle,grains);
+            try {
+                this.motor.runSim();
+                simCompleted = true;
+                if (engUnitToggle.isSelected()) {
+                    motor.convertResult(true);
+                }
+                updatePlotPane(motor.getTimeList(),motor.getThrustList(), "Thrust vs Time", motor.getTimeUnits(), motor.getThrustUnits());
+            } catch (Exception e) {
+                /* TODO Add exception; notify user that motor is null */
+                System.out.println("Exception");
+                if (Objects.isNull(propellant)) {
+                    System.out.println("Prop Exception");
+                }
+                if (Objects.isNull(nozzle)) {
+                    System.out.println("Nozzle Exception");
+                }
+                if (Objects.isNull(grains)) {
+                    System.out.println("No grains added");
+                }
             }
-            updatePlotPane(motor.getTimeList(),motor.getThrustList(), "Thrust vs Time", motor.getTimeUnits(), motor.getThrustUnits());
         });
 
         // Exit Plot screen and reset pane to homePane
@@ -270,6 +290,20 @@ public class SRMSimApp extends Application {
         // Exit Static results, return to plot pane
         backToPlotButton.setOnAction(event -> {
             borderPane.setCenter(plotPane);
+        });
+
+        // Load Preset Propellant
+        loadPresetPropMI.setOnAction(event -> {
+            this.propellant = test.loadPresetPropellant();
+        });
+
+        // Load Preset Nozzle
+        loadPresetNozMI.setOnAction(event -> {
+            this.nozzle = test.loadPresetNozzle();
+        });
+
+        loadPresetGrainMI.setOnAction(event -> {
+            this.grains = test.loadPresetGrains();
         });
 
     }
