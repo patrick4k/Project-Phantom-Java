@@ -213,11 +213,15 @@ public class SRMSimApp extends Application {
             initMotor();
             this.motor.runSim();
             simCompleted = true;
+            if (engUnitToggle.isSelected()) {
+                motor.convertResult(true);
+            }
             updatePlotPane(motor.getTimeList(),motor.getThrustList(), "Thrust vs Time", motor.getTimeUnits(), motor.getThrustUnits());
         });
 
         // Exit Plot screen and reset pane to homePane
         backToMainPaneButton.setOnMouseClicked(event -> {
+            simCompleted = false;
             borderPane.setCenter(homePane);
         });
 
@@ -228,7 +232,6 @@ public class SRMSimApp extends Application {
 
         // Change units post simulation
         engUnitToggle.setOnAction(event -> {
-            /* TODO Create function to change the arrays from altered SI to eng and vise versa */
             if (simCompleted) {
                 motor.convertResult(engUnitToggle.isSelected());
                 assesPlotSelect();

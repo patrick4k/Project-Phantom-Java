@@ -293,20 +293,20 @@ public class Motor {
     }
 
     public void convertResult(boolean toEng) {
-        /* TODO Add Conversions */
         if (toEng) { // SI to English Units
             for (int i = 0; i < counter; i++) { // convert each list to correct units
-                burnAreaList.set(i,  (1550*burnAreaList.get(i))); // m^2 to in^2
-                chamberPressureList.set(i, (1/6894.76)*chamberPressureList.get(i)); // Pa to psi
-                exitPressureList.set(i, (1/6894.76)*exitPressureList.get(i)); // Pa to psi
-                freeVolumeList.set(i,Math.pow(3.28084*12,3)*freeVolumeList.get(i)); // m^3 to in^3
+                burnAreaList.set(i,   Math.pow(2.54,-2)*burnAreaList.get(i)); // cm^2 to in^2
+                chamberPressureList.set(i, (1E6)*(1/6894.76)*chamberPressureList.get(i)); // MPa to psi
+                exitPressureList.set(i, (1E6)*(1/6894.76)*exitPressureList.get(i)); // MPa to psi
+                freeVolumeList.set(i,Math.pow(2.54,-3)*freeVolumeList.get(i)); // cm^3 to in^3
                 thrustList.set(i, (1/4.44822)*thrustList.get(i)); // N to lbf
                 massEjectedList.set(i, 2.20462*massEjectedList.get(i)); // kg to lbm
                 massFlowList.set(i, 2.20462*massFlowList.get(i)); // kg/s to lbm/s
                 massFluxList.set(i,  2.20462*(1/10.7639)*massFluxList.get(i)); // kg/s/m^2 to lbm/s/ft^2
-                regRateList.set(i, 3.28084*12*regRateList.get(i)); // m/s to in/s
-                regTotalList.set(i, 3.28084*12*regTotalList.get(i)); // m to in
+                regRateList.set(i, 39.3701*regRateList.get(i)); // m/s to in/s
+                regTotalList.set(i, (1/25.4)*regTotalList.get(i)); // mm to in
             }
+            this.cStar = propellant.getCstar() * 3.28084 * 12; // m/s to in/s
             this.lengthUnits = "in";
             this.areaUnits = "in^2";
             this.volumeUnits = "in^3";
@@ -317,32 +317,31 @@ public class Motor {
             this.massFluxUnits = "lbm/s/ft^2";
             this.ispUnits = "lbf s";
             this.velocityUnits = "in/s";
-            this.cStar = propellant.getCstar() * 3.28084 * 12; // m/s to in/s
         }
         else { // English to SI
             for (int i = 0; i < counter; i++) { // convert each list to correct units
-                burnAreaList.set(i,  (1550*burnAreaList.get(i))); // m^2 to in^2
-                chamberPressureList.set(i, (1/6894.76)*chamberPressureList.get(i)); // Pa to psi
-                exitPressureList.set(i, (1/6894.76)*exitPressureList.get(i)); // Pa to psi
-                freeVolumeList.set(i,Math.pow(3.28084*12,3)*freeVolumeList.get(i)); // m^3 to in^3
-                thrustList.set(i, (1/4.44822)*thrustList.get(i)); // N to lbf
-                massEjectedList.set(i, 2.20462*massEjectedList.get(i)); // kg to lbm
-                massFlowList.set(i, 2.20462*massFlowList.get(i)); // kg/s to lbm/s
-                massFluxList.set(i,  2.20462*(1/10.7639)*massFluxList.get(i)); // kg/s/m^2 to lbm/s/ft^2
-                regRateList.set(i, 3.28084*12*regRateList.get(i)); // m/s to in/s
-                regTotalList.set(i, 3.28084*12*regTotalList.get(i)); // m to in
+                burnAreaList.set(i,  Math.pow(2.54,2)*burnAreaList.get(i)); // in^2 to cm^2
+                chamberPressureList.set(i, (1E-6)*(6894.76)*chamberPressureList.get(i)); // psi to MPa
+                exitPressureList.set(i, (1E-6)*(6894.76)*exitPressureList.get(i)); // psi to MPa
+                freeVolumeList.set(i,Math.pow(2.54,3)*freeVolumeList.get(i)); // in^3 to cm^3
+                thrustList.set(i, (4.44822)*thrustList.get(i)); // lbf to N
+                massEjectedList.set(i, (1/2.20462)*massEjectedList.get(i)); // lbm to kg
+                massFlowList.set(i, (1/2.20462)*massFlowList.get(i)); // lbm/s to kg/s
+                massFluxList.set(i,  (1/2.20462)*(10.7639)*massFluxList.get(i)); // lbm/s/ft^2 to kg/s/m^2
+                regRateList.set(i, (1/(39.3701))*regRateList.get(i)); // in/s to m/s
+                regTotalList.set(i, (25.4)*regTotalList.get(i)); // in to mm
             }
-            String thrustUnits = "N";
-            String pressureUnits = "MPa";
-            String massUnits = "kg";
-            String massFlowUnits = "kg/s";
-            String massFluxUnits = "kg/s/m^2";
-            String lengthUnits = "mm";
-            String areaUnits = "cm^2";
-            String volumeUnits = "cm^3";
-            String ispUnits = "N s";
-            String velocityUnits = "m/s";
             this.cStar = propellant.getCstar() * 3.28084 * 12; // m/s to in/s
+            this.thrustUnits = "N";
+            this.pressureUnits = "MPa";
+            this.massUnits = "kg";
+            this.massFlowUnits = "kg/s";
+            this.massFluxUnits = "kg/s/m^2";
+            this.lengthUnits = "mm";
+            this.areaUnits = "cm^2";
+            this.volumeUnits = "cm^3";
+            this.ispUnits = "N s";
+            this.velocityUnits = "m/s";
         }
     }
 
