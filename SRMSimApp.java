@@ -201,6 +201,13 @@ public class SRMSimApp extends Application {
         updatePlotPane(xArr,yArr,plotSelected, xAxisTitle, yAxisTitle);
     }
 
+    public void assesStaticResults() {
+        staticResults staticResults = new staticResults(motor, paneHeight, paneWidth);
+        staticResultsPane = staticResults.getStaticResultsPane();
+        staticResultsPane.getChildren().add(backToPlotButton);
+        borderPane.setCenter(staticResultsPane);
+    }
+
     public void updatePlotPane(ArrayList<Double> xArr, ArrayList<Double> yArr, String plotTitleText, String xAxisTitle, String yAxisTitle) {
         if (xArr.size() == yArr.size()) {
             plotArrayList plot = new plotArrayList(xArr,yArr,paneHeight,paneWidth, xAxisTitle, yAxisTitle);
@@ -245,18 +252,19 @@ public class SRMSimApp extends Application {
 
         // Change units post simulation
         engUnitToggle.setOnAction(event -> {
-            if (simCompleted) {
+            if ((simCompleted) && (borderPane.getCenter() == plotPane)) {
                 motor.convertResult(engUnitToggle.isSelected());
                 assesPlotSelect();
+            }
+            else if ((simCompleted) && (borderPane.getCenter() == staticResultsPane)) {
+                motor.convertResult(engUnitToggle.isSelected());
+                assesStaticResults();
             }
         });
 
         // Update and view 
         viewStaticButton.setOnAction(event -> {
-            staticResults staticResults = new staticResults(motor, paneHeight, paneWidth);
-            staticResultsPane = staticResults.getStaticResultsPane();
-            staticResultsPane.getChildren().add(backToPlotButton);
-            borderPane.setCenter(staticResultsPane);
+            assesStaticResults();
         });
 
         // Exit Static results, return to plot pane

@@ -46,7 +46,7 @@ public class Motor {
     private String lengthUnits = "mm";
     private String areaUnits = "cm^2";
     private String volumeUnits = "cm^3";
-    private String ispUnits = "N s";
+    private String impulseUnits = "N s";
     private String velocityUnits = "m/s";
     private final String timeUnits = "s";
 
@@ -54,6 +54,8 @@ public class Motor {
     private double atmPressure;
     private double motorVolume;
     private double cStar;
+    private double ISP;
+    private double impulse;
 
     // dynamic doubles
     private double chamberPressure;
@@ -95,6 +97,16 @@ public class Motor {
         this.propellant = propellant;
         this.nozzle = nozzle;
         this.grainList = grainList;
+    }
+
+    public double average(ArrayList<Double> ArrList) {
+        double sum = 0;
+        double count = 0;
+        for (Double arrValue : ArrList) {
+            sum += arrValue;
+            count++;
+        }
+        return sum / count;
     }
 
     public void popList() { // clears indexing issues if propellant is fully burned
@@ -242,6 +254,14 @@ public class Motor {
         }
     }
 
+    public void calcImpulse() {
+        this.impulse = average(this.thrustList) * Collections.max(this.timeList);
+    }
+
+    public void calcISP() {
+        ISP = average(this.thrustList) / (9.81 * average(this.massFlowList));
+    }
+
     public void runSim() {
         //this.calcMotorVolume();
         // while loop opens
@@ -269,6 +289,7 @@ public class Motor {
             }
         }
         this.calcVolumeLoading();
+        this.calcISP();
         this.shiftSIUnits();
     }
 
@@ -307,6 +328,7 @@ public class Motor {
                 regTotalList.set(i, (1/25.4)*regTotalList.get(i)); // mm to in
             }
             this.cStar = propellant.getCstar() * 3.28084 * 12; // m/s to in/s
+            this.impulse = (1/4.44822)*impulse;
             this.lengthUnits = "in";
             this.areaUnits = "in^2";
             this.volumeUnits = "in^3";
@@ -315,7 +337,7 @@ public class Motor {
             this.massUnits = "lbm";
             this.massFlowUnits = "lbm/s";
             this.massFluxUnits = "lbm/s/ft^2";
-            this.ispUnits = "lbf s";
+            this.impulseUnits = "lbf s";
             this.velocityUnits = "in/s";
         }
         else { // English to SI
@@ -340,7 +362,7 @@ public class Motor {
             this.lengthUnits = "mm";
             this.areaUnits = "cm^2";
             this.volumeUnits = "cm^3";
-            this.ispUnits = "N s";
+            this.impulseUnits = "N s";
             this.velocityUnits = "m/s";
         }
     }
@@ -362,6 +384,9 @@ public class Motor {
     }
     public double getcStar() {
         return cStar;
+    }
+    public double getISP() {
+        return ISP;
     }
     public int getCounter() {
         return this.counter;
@@ -440,8 +465,8 @@ public class Motor {
     public String getVolumeUnits() {
         return volumeUnits;
     }
-    public String getIspUnits() {
-        return ispUnits;
+    public String getImpulseUnits() {
+        return impulseUnits;
     }
     public String getVelocityUnits() {
         return velocityUnits;

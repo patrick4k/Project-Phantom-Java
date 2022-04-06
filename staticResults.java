@@ -11,7 +11,7 @@ import javafx.scene.text.Font;
 
 public class staticResults {
     private Motor motor;
-    private double maxThrust, maxChamberPressure, burnTime, isp, cStar, initalKn, maxKn;
+    private double maxThrust, maxChamberPressure, burnTime, cStar, initalKn, maxKn;
 
     private double panHeight, paneWidth;
     private Label staticResultsTitle, maxThrustLabel, maxChamberPressureLabel, burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel;
@@ -29,7 +29,7 @@ public class staticResults {
         maxThrustLabel = new Label("Max Thrust = " + maxThrust + " " + motor.getThrustUnits());
         maxChamberPressureLabel = new Label("Max Chamber Pressure = " + maxChamberPressure + " " + motor.getPressureUnits());
         burnTimeLabel = new Label("Burn Time = " + burnTime + " s");
-        ispLabel = new Label("ISP = " + isp + " " + motor.getIspUnits());
+        ispLabel = new Label("ISP = " + motor.getISP() + " " + motor.getTimeUnits());
         cStarLabel = new Label("C* = " + cStar + " " + motor.getVelocityUnits());
         initialKnLabel = new Label("Initial Kn = " + initalKn);
         maxKnLabel = new Label("Max Kn = " + maxKn);
@@ -58,21 +58,10 @@ public class staticResults {
         staticResultsPane.getChildren().addAll(staticResultsTitle, maxThrustLabel, maxChamberPressureLabel, burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel);
     }
 
-    public double average(ArrayList<Double> ArrList) {
-        double sum = 0;
-        double count = 0;
-        for (Double arrValue : ArrList) {
-            sum += arrValue;
-            count++;
-        }
-        return sum / count;
-    }
-
     public void evaluateMotor() {
         maxThrust = Collections.max(motor.getThrustList());
         maxChamberPressure = Collections.max(motor.getChamberPressureList());
         burnTime = Collections.max(motor.getTimeList());
-        isp = average(motor.getThrustList()) / (9.81 * average(motor.getMassFlowList()));
         cStar = motor.getcStar();
         initalKn = motor.getKnList().get(1);
         maxKn = Collections.max(motor.getKnList());
