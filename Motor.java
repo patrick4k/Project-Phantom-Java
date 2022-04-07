@@ -56,6 +56,13 @@ public class Motor {
     private double cStar;
     private double ISP;
     private double impulse;
+    private double maxThrust;
+    private double maxChamberPressure;
+    private double avgThrust;
+    private double burnTime;
+    private double initalKn;
+    private double maxKn;
+
 
     // dynamic doubles
     private double chamberPressure;
@@ -97,24 +104,6 @@ public class Motor {
         this.propellant = propellant;
         this.nozzle = nozzle;
         this.grainList = grainList;
-    }
-
-    public double average(ArrayList<Double> ArrList) {
-        double sum = 0;
-        double count = 0;
-        for (Double arrValue : ArrList) {
-            sum += arrValue;
-            count++;
-        }
-        return sum / count;
-    }
-
-    public void popList() { // clears indexing issues if propellant is fully burned
-        this.regRateList.remove(this.regRateList.size()-1);
-        this.regStepList.remove(this.regStepList.size()-1);
-        this.regTotalList.remove(this.regTotalList.size()-1);
-        this.burnAreaList.remove(this.burnAreaList.size()-1);
-        counter -= 1;
     }
 
     public void calcRegRate() {
@@ -254,14 +243,6 @@ public class Motor {
         }
     }
 
-    public void calcImpulse() {
-        this.impulse = average(this.thrustList) * Collections.max(this.timeList);
-    }
-
-    public void calcISP() {
-        ISP = average(this.thrustList) / (9.81 * average(this.massFlowList));
-    }
-
     public void runSim() {
         //this.calcMotorVolume();
         // while loop opens
@@ -289,8 +270,19 @@ public class Motor {
             }
         }
         this.calcVolumeLoading();
-        this.calcISP();
+        this.evaluateMotor();
         this.shiftSIUnits();
+    }
+
+    public void evaluateMotor() {
+        this.maxThrust = Collections.max(this.getThrustList());
+        this.maxChamberPressure = Collections.max(this.getChamberPressureList());
+        this.ISP = average(this.thrustList) / (9.81 * average(this.massFlowList));
+        this.impulse = average(this.thrustList) * Collections.max(this.timeList);
+        this.burnTime = Collections.max(this.getTimeList());
+        this.cStar = this.getcStar();
+        this.initalKn = this.getKnList().get(1);
+        this.maxKn = Collections.max(this.getKnList());
     }
 
     public void printBurnAreaAtRegTotal(double regTotal) {
@@ -300,6 +292,24 @@ public class Motor {
             burnArea += grain.getBurnArea();
         }
         System.out.println("Burn Area @ regTotal = " + regTotal + ": " + burnArea);
+    }
+
+    public double average(ArrayList<Double> ArrList) {
+        double sum = 0;
+        double count = 0;
+        for (Double arrValue : ArrList) {
+            sum += arrValue;
+            count++;
+        }
+        return sum / count;
+    }
+
+    public void popList() { // clears indexing issues if propellant is fully burned
+        this.regRateList.remove(this.regRateList.size()-1);
+        this.regStepList.remove(this.regStepList.size()-1);
+        this.regTotalList.remove(this.regTotalList.size()-1);
+        this.burnAreaList.remove(this.burnAreaList.size()-1);
+        counter -= 1;
     }
 
     public void shiftSIUnits() {
@@ -314,7 +324,7 @@ public class Motor {
     }
 
     public void convertResult(boolean toEng) {
-        if (toEng) { // SI to English Units
+        if ((toEng) && (isSI())) { // SI to English Units
             for (int i = 0; i < counter; i++) { // convert each list to correct units
                 burnAreaList.set(i,   Math.pow(2.54,-2)*burnAreaList.get(i)); // cm^2 to in^2
                 chamberPressureList.set(i, (1E6)*(1/6894.76)*chamberPressureList.get(i)); // MPa to psi
@@ -339,8 +349,9 @@ public class Motor {
             this.massFluxUnits = "lbm/s/ft^2";
             this.impulseUnits = "lbf s";
             this.velocityUnits = "in/s";
+            this.SIUnits = false;
         }
-        else { // English to SI
+        else if ((!toEng) && (!isSI())) { // English to SI
             for (int i = 0; i < counter; i++) { // convert each list to correct units
                 burnAreaList.set(i,  Math.pow(2.54,2)*burnAreaList.get(i)); // in^2 to cm^2
                 chamberPressureList.set(i, (1E-6)*(6894.76)*chamberPressureList.get(i)); // psi to MPa
@@ -353,7 +364,7 @@ public class Motor {
                 regRateList.set(i, (1/(39.3701))*regRateList.get(i)); // in/s to m/s
                 regTotalList.set(i, (25.4)*regTotalList.get(i)); // in to mm
             }
-            this.cStar = propellant.getCstar() * 3.28084 * 12; // m/s to in/s
+            this.cStar = propellant.getCstar(); // m/s to in/s
             this.thrustUnits = "N";
             this.pressureUnits = "MPa";
             this.massUnits = "kg";
@@ -364,6 +375,7 @@ public class Motor {
             this.volumeUnits = "cm^3";
             this.impulseUnits = "N s";
             this.velocityUnits = "m/s";
+            this.SIUnits = true;
         }
     }
 
@@ -436,6 +448,28 @@ public class Motor {
     }
     public ArrayList<Double> getTimeList() {
         return timeList;
+    }
+        // Static results
+    public double getImpulse() {
+        return impulse;
+    }
+    public double getMaxThrust() {
+        return maxThrust;
+    }
+    public double getMaxChamberPressure() {
+        return maxChamberPressure;
+    }
+    public double getAvgThrust() {
+        return avgThrust;
+    }
+    public double getBurnTime() {
+        return burnTime;
+    }
+    public double getInitalKn() {
+        return initalKn;
+    }
+    public double getMaxKn() {
+        return maxKn;
     }
         // Units
     public boolean isSI() {

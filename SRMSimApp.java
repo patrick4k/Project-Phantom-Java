@@ -50,7 +50,7 @@ public class SRMSimApp extends Application {
 
     // Exceptions
     //private final Label propExcepLabel, nozzExceptLabel, grainExcepLabel;
-    private Label testExcepLabel;
+    private Label exceptionLabel;
     private BorderPane exceptionBorder;
     private Stage exceptionStage;
     private Pane exceptionPane;
@@ -284,11 +284,11 @@ public class SRMSimApp extends Application {
                     errorStringBuilder.append("Grains Necessary for Simulation\n\n");
                 }
                 // Exception Initialize
-                testExcepLabel = new Label(errorStringBuilder.toString());
-                testExcepLabel.setFont(new Font(14));
+                exceptionLabel = new Label(errorStringBuilder.toString());
+                exceptionLabel.setFont(new Font(14));
                 exceptionStage.close();
                 exceptionPane.getChildren().clear();
-                exceptionPane.getChildren().add(testExcepLabel);
+                exceptionPane.getChildren().add(exceptionLabel);
                 exceptionStage.show();
             }
         });

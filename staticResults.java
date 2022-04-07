@@ -12,7 +12,6 @@ import javafx.scene.text.Font;
 
 public class staticResults {
     private Motor motor;
-    private double maxThrust, maxChamberPressure, burnTime, cStar, initalKn, maxKn;
 
     private double panHeight, paneWidth;
     private Label staticResultsTitle, maxThrustLabel, maxChamberPressureLabel, burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel;
@@ -24,16 +23,14 @@ public class staticResults {
         this.panHeight = paneHeight;
         this.paneWidth = paneWidth;
 
-        evaluateMotor();
-
         staticResultsTitle = new Label("Thats a lot of power!");
-        maxThrustLabel = new Label("Max Thrust = " + roundToSigFigs(maxThrust, 6) + " " + motor.getThrustUnits());
-        maxChamberPressureLabel = new Label("Max Chamber Pressure = " + roundToSigFigs(maxChamberPressure,5) + " " + motor.getPressureUnits());
-        burnTimeLabel = new Label("Burn Time = " + roundToSigFigs(burnTime,6) + " s");
+        maxThrustLabel = new Label("Max Thrust = " + roundToSigFigs(motor.getMaxThrust(), 6) + " " + motor.getThrustUnits());
+        maxChamberPressureLabel = new Label("Max Chamber Pressure = " + roundToSigFigs(motor.getMaxChamberPressure(),5) + " " + motor.getPressureUnits());
+        burnTimeLabel = new Label("Burn Time = " + roundToSigFigs(motor.getBurnTime(),6) + " s");
         ispLabel = new Label("ISP = " + roundToSigFigs(motor.getISP(), 6) + " " + motor.getTimeUnits());
-        cStarLabel = new Label("C* = " + roundToSigFigs(cStar, 6) + " " + motor.getVelocityUnits());
-        initialKnLabel = new Label("Initial Kn = " + roundToSigFigs(initalKn, 6));
-        maxKnLabel = new Label("Max Kn = " + roundToSigFigs(maxKn, 6));
+        cStarLabel = new Label("C* = " + roundToSigFigs(motor.getcStar(), 6) + " " + motor.getVelocityUnits());
+        initialKnLabel = new Label("Initial Kn = " + roundToSigFigs(motor.getInitalKn(), 6));
+        maxKnLabel = new Label("Max Kn = " + roundToSigFigs(motor.getMaxKn(), 6));
 
         staticResultsTitle.setFont(new Font("Comic Sans MS", 20));
 
@@ -57,15 +54,6 @@ public class staticResults {
 
         staticResultsPane = new Pane();
         staticResultsPane.getChildren().addAll(staticResultsTitle, maxThrustLabel, maxChamberPressureLabel, burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel);
-    }
-
-    public void evaluateMotor() {
-        maxThrust = Collections.max(motor.getThrustList());
-        maxChamberPressure = Collections.max(motor.getChamberPressureList());
-        burnTime = Collections.max(motor.getTimeList());
-        cStar = motor.getcStar();
-        initalKn = motor.getKnList().get(1);
-        maxKn = Collections.max(motor.getKnList());
     }
 
     public String roundToSigFigs(double value, int sigFigs) {
