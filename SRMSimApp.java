@@ -324,6 +324,7 @@ public class SRMSimApp extends Application {
 
         // Exit Static results, return to plot pane
         backToPlotButton.setOnAction(event -> {
+            assesPlotSelect();
             borderPane.setCenter(plotPane);
         });
 
@@ -365,7 +366,6 @@ public class SRMSimApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        
         lambdaFunctions();
 
         // SETUP

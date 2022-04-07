@@ -337,8 +337,11 @@ public class Motor {
                 regRateList.set(i, 39.3701*regRateList.get(i)); // m/s to in/s
                 regTotalList.set(i, (1/25.4)*regTotalList.get(i)); // mm to in
             }
+            this.maxThrust = (1/4.44822)*maxThrust; // N to lbf
+            this.maxChamberPressure = (1E6)*(1/6894.76)*maxChamberPressure; // MPa to psi
+            this.impulse = (1/4.44822)*impulse; // N s to lbf s
             this.cStar = propellant.getCstar() * 3.28084 * 12; // m/s to in/s
-            this.impulse = (1/4.44822)*impulse;
+
             this.lengthUnits = "in";
             this.areaUnits = "in^2";
             this.volumeUnits = "in^3";
@@ -364,7 +367,11 @@ public class Motor {
                 regRateList.set(i, (1/(39.3701))*regRateList.get(i)); // in/s to m/s
                 regTotalList.set(i, (25.4)*regTotalList.get(i)); // in to mm
             }
-            this.cStar = propellant.getCstar(); // m/s to in/s
+            this.maxThrust = (4.44822)*maxThrust; // lbf to N
+            this.maxChamberPressure = (1E-6)*(6894.76)*maxChamberPressure; // psi to MPa
+            this.impulse = (4.44822)*impulse; // lbf s to N s
+            this.cStar = propellant.getCstar() / (3.28084*12); // in/s to m/s
+
             this.thrustUnits = "N";
             this.pressureUnits = "MPa";
             this.massUnits = "kg";
