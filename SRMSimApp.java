@@ -267,6 +267,7 @@ public class SRMSimApp extends Application {
                 this.motor.runSim();
                 changeMenuBar(true);
                 simCompleted = true;
+                exceptionStage.close();
                 if (engUnitToggle.isSelected()) {
                     motor.convertResult(true);
                 }
@@ -289,6 +290,7 @@ public class SRMSimApp extends Application {
                 exceptionStage.close();
                 exceptionPane.getChildren().clear();
                 exceptionPane.getChildren().add(exceptionLabel);
+                exceptionStage.setAlwaysOnTop(true);
                 exceptionStage.show();
             }
         });
