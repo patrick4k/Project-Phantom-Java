@@ -14,7 +14,7 @@ public class staticResults {
     private Motor motor;
 
     private double panHeight, paneWidth;
-    private Label staticResultsTitle, maxThrustLabel, maxChamberPressureLabel, burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel;
+    private Label staticResultsTitle, maxThrustLabel, avgThrustLabel, maxChamberPressureLabel, burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel;
     private Pane staticResultsPane;
 
 
@@ -25,6 +25,7 @@ public class staticResults {
 
         staticResultsTitle = new Label("Thats a lot of power!");
         maxThrustLabel = new Label("Max Thrust = " + roundToSigFigs(motor.getMaxThrust(), 6) + " " + motor.getThrustUnits());
+        avgThrustLabel = new Label("Average Thrust = " + roundToSigFigs(motor.getAvgThrust(),6) + " " + motor.getThrustUnits());
         maxChamberPressureLabel = new Label("Max Chamber Pressure = " + roundToSigFigs(motor.getMaxChamberPressure(),5) + " " + motor.getPressureUnits());
         burnTimeLabel = new Label("Burn Time = " + roundToSigFigs(motor.getBurnTime(),6) + " s");
         ispLabel = new Label("ISP = " + roundToSigFigs(motor.getISP(), 6) + " " + motor.getTimeUnits());
@@ -38,22 +39,24 @@ public class staticResults {
         staticResultsTitle.setLayoutY(.1*paneHeight);
         maxThrustLabel.setLayoutX(50);
         maxThrustLabel.setLayoutY(125);
+        avgThrustLabel.setLayoutX(50);
+        avgThrustLabel.setLayoutY(150);
         maxChamberPressureLabel.setLayoutX(50);
-        maxChamberPressureLabel.setLayoutY(150);
+        maxChamberPressureLabel.setLayoutY(175);
         burnTimeLabel.setLayoutX(50);
-        burnTimeLabel.setLayoutY(175);
+        burnTimeLabel.setLayoutY(200);
         ispLabel.setLayoutX(50);
-        ispLabel.setLayoutY(200);
+        ispLabel.setLayoutY(225);
         cStarLabel.setLayoutX(50);
-        cStarLabel.setLayoutY(225);
+        cStarLabel.setLayoutY(250);
         initialKnLabel.setLayoutX(50);
-        initialKnLabel.setLayoutY(250);
+        initialKnLabel.setLayoutY(275);
         maxKnLabel.setLayoutX(50);
-        maxKnLabel.setLayoutY(275);
+        maxKnLabel.setLayoutY(300);
 
 
         staticResultsPane = new Pane();
-        staticResultsPane.getChildren().addAll(staticResultsTitle, maxThrustLabel, maxChamberPressureLabel, burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel);
+        staticResultsPane.getChildren().addAll(staticResultsTitle, maxThrustLabel, avgThrustLabel, maxChamberPressureLabel, burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel);
     }
 
     public String roundToSigFigs(double value, int sigFigs) {

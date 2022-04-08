@@ -276,6 +276,7 @@ public class Motor {
 
     public void evaluateMotor() {
         this.maxThrust = Collections.max(this.getThrustList());
+        this.avgThrust = average(this.thrustList);
         this.maxChamberPressure = (1E-6)*Collections.max(this.getChamberPressureList()); // Pa to MPa
         this.ISP = average(this.thrustList) / (9.81 * average(this.massFlowList));
         this.impulse = average(this.thrustList) * Collections.max(this.timeList);
