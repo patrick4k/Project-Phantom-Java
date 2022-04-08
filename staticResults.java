@@ -56,7 +56,8 @@ public class staticResults {
 
 
         staticResultsPane = new Pane();
-        staticResultsPane.getChildren().addAll(staticResultsTitle, maxThrustLabel, avgThrustLabel, maxChamberPressureLabel, burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel);
+        staticResultsPane.getChildren().addAll(staticResultsTitle, maxThrustLabel, avgThrustLabel, maxChamberPressureLabel,
+                burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel);
     }
 
     public String roundToSigFigs(double value, int sigFigs) {

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class exportPerformance {
-    private Motor motor;
+    private final Motor motor;
     private ArrayList<String> formattedData;
     private String filename;
 
@@ -54,9 +54,8 @@ public class exportPerformance {
         File file = new File(motorName + ".csv");
         while (file.isFile()) {
             i++;
-            file = new File(motorName + "_v" + i + ".csv");
+            file = new File(motorName + "(" + i + ").csv");
         }
-
         FileWriter fileWriter = new FileWriter(file);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         for (String formattedDatum : formattedData) {
@@ -65,5 +64,4 @@ public class exportPerformance {
         }
         bufferedWriter.close();
     }
-
 }

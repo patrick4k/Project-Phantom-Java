@@ -216,7 +216,10 @@ public class Motor {
     }
 
     public void calcForceCoefficient() {
-        double forceCoefficientIdeal = Math.sqrt(((2*(Math.pow(this.propellant.getGamma(),2))/(this.propellant.getGamma()-1))*(Math.pow((2/(this.propellant.getGamma()+1)),((this.propellant.getGamma()+1)/(this.propellant.getGamma()-1)))))*(1 - Math.pow((this.exitPressure/this.chamberPressure),((this.propellant.getGamma()-1)/this.propellant.getGamma())))) + ((this.exitPressure - this.atmPressure)*Math.pow(this.nozzle.getExitDiameter(),2))/(this.chamberPressure*Math.pow(this.nozzle.getThroatDiameter(),2));
+        double forceCoefficientIdeal = Math.sqrt(((2*(Math.pow(this.propellant.getGamma(),2))/(this.propellant.getGamma()-1))
+                *(Math.pow((2/(this.propellant.getGamma()+1)),((this.propellant.getGamma()+1)/(this.propellant.getGamma()-1)))))
+                *(1 - Math.pow((this.exitPressure/this.chamberPressure),((this.propellant.getGamma()-1)/this.propellant.getGamma()))))
+                + ((this.exitPressure - this.atmPressure)*Math.pow(this.nozzle.getExitDiameter(),2))/(this.chamberPressure*Math.pow(this.nozzle.getThroatDiameter(),2));
         double throatLoss = 0.99;
         double skinLoss = 0.99;
         double divLoss = (0.5)*(1+Math.cos(this.nozzle.getExitAngle()));

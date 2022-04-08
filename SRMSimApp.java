@@ -58,8 +58,9 @@ public class SRMSimApp extends Application {
     private Stage exceptionStage;
     private Pane exceptionPane;
 
-    // Choice Boxes
+    // Plot Select addons
     private final ChoiceBox<String> plotSelect;
+    private Label plotHeaderLabel;
 
     // Doubles
     private final double paneHeight;
@@ -67,11 +68,6 @@ public class SRMSimApp extends Application {
 
     // Constructor
     public SRMSimApp() {
-        /*
-        propellant = new Propellant();
-        nozzle = new Nozzle();
-        grains = new ArrayList<>();
-        */
         paneWidth = 750;
         paneHeight = 600;
 
@@ -128,7 +124,9 @@ public class SRMSimApp extends Application {
         homePane = new Pane();
         homePane.getChildren().addAll(runSimButton);
         plotSelect = new ChoiceBox<>();
-        plotSelect.getItems().addAll("Thrust vs Time","Chamber Pressure vs Time","Mass Flow vs Time", "Mass Ejected vs Time", "Mass Flux vs Time", "Burn Area vs Time", "Burn Area vs Regression", "Kn vs Time", "Regression Rate vs Time", "Regression vs Time", "Regression Rate vs Chamber Pressure", "Exit Pressure vs Time", "Force Coefficient vs Time", "Free Volume vs Time", "Volume Loading vs Time");
+        plotSelect.getItems().addAll("Thrust vs Time","Chamber Pressure vs Time","Mass Flow vs Time", "Mass Ejected vs Time",
+                "Mass Flux vs Time", "Burn Area vs Time", "Burn Area vs Regression", "Kn vs Time", "Regression Rate vs Time", "Regression vs Time",
+                "Regression Rate vs Chamber Pressure", "Exit Pressure vs Time", "Force Coefficient vs Time", "Free Volume vs Time", "Volume Loading vs Time");
         plotSelect.setLayoutX(0.25*paneWidth);
         plotSelect.setLayoutY(0.25*paneHeight - 35);
     }
@@ -235,7 +233,11 @@ public class SRMSimApp extends Application {
             plotArrayList plot = new plotArrayList(xArr,yArr,paneHeight,paneWidth, xAxisTitle, yAxisTitle);
             plotSelect.setValue(plotTitleText);
             plotPane = plot.getPlotPane();
-            plotPane.getChildren().addAll(backToMainPaneButton, plotSelect, viewStaticButton);
+            plotHeaderLabel = new Label(motor.getMotorName() + " simulation results");
+            /* TODO Center Label */
+            plotHeaderLabel.layoutXProperty().bind(plotPane.widthProperty().subtract(plotPane.widthProperty()).divide(2));
+            plotHeaderLabel.layoutYProperty().bind(plotPane.heightProperty().subtract(plotPane.heightProperty()).divide(2));
+            plotPane.getChildren().addAll(backToMainPaneButton, plotSelect, viewStaticButton, plotHeaderLabel);
             borderPane.setCenter(plotPane);
         }
         else {
