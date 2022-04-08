@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Motor {
-    private String motorName = null;
+    private String motorName;
     // create objects
     private Propellant propellant = new Propellant();
     private Nozzle nozzle = new Nozzle();
@@ -282,7 +282,7 @@ public class Motor {
         this.impulse = average(this.thrustList) * Collections.max(this.timeList);
         this.burnTime = Collections.max(this.getTimeList());
         this.cStar = this.getcStar();
-        this.initalKn = this.getKnList().get(1);
+        this.initalKn = this.getKnList().get(0);
         this.maxKn = Collections.max(this.getKnList());
     }
 
@@ -405,11 +405,8 @@ public class Motor {
     public Propellant getPropellant() {
         return propellant;
     }
-    public double getcStar() {
-        return cStar;
-    }
-    public double getISP() {
-        return ISP;
+    public String getMotorName() {
+        return motorName;
     }
     public int getCounter() {
         return this.counter;
@@ -481,6 +478,12 @@ public class Motor {
     }
     public double getMaxKn() {
         return maxKn;
+    }
+    public double getcStar() {
+        return cStar;
+    }
+    public double getISP() {
+        return ISP;
     }
         // Units
     public boolean isSI() {

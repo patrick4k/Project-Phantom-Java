@@ -19,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -33,14 +34,16 @@ public class SRMSimApp extends Application {
     // Panes
     private final BorderPane borderPane;
     private final Pane homePane;
-    private Pane plotPane;
-    private Pane staticResultsPane;
+    private Pane plotPane, staticResultsPane;
 
     // Menu Bar
     private final MenuItem closeMI, loadPresetPropMI,loadPresetNozMI, loadPresetCrossMI, loadPresetBatesMI, loadAllPreset, exportPerformanceMI;
     private final RadioMenuItem engUnitToggle;
     private final Menu fileMenu, optionsMenu, loadPresetGrainSubMenu, helpMenu;
     private final MenuBar mainMenu;
+
+    // Motor Input
+    private TextField motorNameInput;
 
     // Buttons
     private final Button runSimButton;
@@ -90,6 +93,10 @@ public class SRMSimApp extends Application {
         helpMenu = new Menu("Help");
         mainMenu = new MenuBar(fileMenu, optionsMenu, helpMenu);
 
+        // Motor Input setup
+        /* TODO Add motor input setup */
+        motorNameInput = new TextField("Input Name");
+
         // Define Run Sim button
         runSimButton = new Button("Calculate Motor Performance");
         runSimButton.setLayoutX((56.0/75)*paneWidth);
@@ -116,9 +123,10 @@ public class SRMSimApp extends Application {
         backToPlotButton.setLayoutX(10);
         backToPlotButton.setLayoutY(10);
 
+        // General Setup
         borderPane = new BorderPane();
         homePane = new Pane();
-        homePane.getChildren().add(runSimButton);
+        homePane.getChildren().addAll(runSimButton);
         plotSelect = new ChoiceBox<>();
         plotSelect.getItems().addAll("Thrust vs Time","Chamber Pressure vs Time","Mass Flow vs Time", "Mass Ejected vs Time", "Mass Flux vs Time", "Burn Area vs Time", "Burn Area vs Regression", "Kn vs Time", "Regression Rate vs Time", "Regression vs Time", "Regression Rate vs Chamber Pressure", "Exit Pressure vs Time", "Force Coefficient vs Time", "Free Volume vs Time", "Volume Loading vs Time");
         plotSelect.setLayoutX(0.25*paneWidth);
@@ -247,9 +255,7 @@ public class SRMSimApp extends Application {
             fileMenu.getItems().clear();
             fileMenu.getItems().addAll(exportPerformanceMI, closeMI);
             optionsMenu.getItems().removeAll(loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
-            optionsMenu.fire();
         }
-        //else if (!(optionsMenu.getItems().contains(loadPresetPropMI) && optionsMenu.getItems().contains(loadPresetNozMI) && optionsMenu.getItems().contains(loadPresetGrainSubMenu) && optionsMenu.getItems().contains(loadAllPreset))) { // to home pane
         else {
             fileMenu.getItems().remove(exportPerformanceMI);
             optionsMenu.getItems().addAll(loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
@@ -263,10 +269,10 @@ public class SRMSimApp extends Application {
         });
 
         // Run sim with inputted motor
-        /* TODO Add error handling */
         runSimButton.setOnMouseClicked(event -> {
-            //initMotor();
+            /*TODO asses input text fields and assign to new Prop Nozz and grainList */
             this.motor = new Motor(propellant,nozzle,grains);
+            this.motor.setMotorName("BATES300");
             try {
                 this.motor.runSim();
                 changeMenuBar(true);
@@ -296,6 +302,15 @@ public class SRMSimApp extends Application {
                 exceptionPane.getChildren().add(exceptionLabel);
                 exceptionStage.setAlwaysOnTop(true);
                 exceptionStage.show();
+            }
+        });
+
+        // Export Results as CSV file
+        exportPerformanceMI.setOnAction(event -> {
+            try {
+                new exportPerformance(motor);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
 

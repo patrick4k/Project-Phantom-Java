@@ -5,99 +5,58 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class exportPerformance {
     private Motor motor;
-    private String filename;
     private ArrayList<String> formattedData;
+    private String filename;
 
-    public exportPerformance(Motor motor, String filename) throws IOException {
+    public exportPerformance(Motor motor) throws IOException {
         this.motor = motor;
-        this.filename = filename;
-        formatData();
+        extractMotorData();
         exportCsvFile();
     }
 
-    public void appendFormattedData(StringBuilder stringBuilder, ArrayList<Double> arrList) {
-        for (double arrValue:arrList) {
-            stringBuilder.append(arrValue);
-            stringBuilder.append(",");
-        }
-        formattedData.add(stringBuilder.toString());
-        stringBuilder.delete(0,stringBuilder.length());
-    }
-
-    public static void main(String[] args) throws IOException {
-        test test = new test();
-        Motor motor = test.initMotor();
-        motor.runSim();
-        new exportPerformance(motor, "testFilename");
-    }
-
-    public void formatData() {
+    public void extractMotorData() {
         formattedData = new ArrayList<>();
-        StringBuilder stringBuilder = new StringBuilder();
-
-        // Time
-        stringBuilder.append("Time (").append(motor.getTimeUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getTimeList());
-
-        // Thrust
-        stringBuilder.append("Thrust (").append(motor.getThrustUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getThrustList());
-
-        // Chamber Pressure
-        stringBuilder.append("Chamber Pressure (").append(motor.getPressureUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getChamberPressureList());
-
-        // Mass Flow
-        stringBuilder.append("Mass Flow (").append(motor.getMassFlowUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getMassFlowList());
-
-        // Mass Ejected
-        stringBuilder.append("Mass Ejected (").append(motor.getMassUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getMassEjectedList());
-
-        // Mass Flux
-        stringBuilder.append("Mass Flux (").append(motor.getMassFluxUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getMassFluxList());
-
-        // Burn Area
-        stringBuilder.append("Burn Area (").append(motor.getAreaUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getBurnAreaList());
-
-        // Kn
-        stringBuilder.append("Kn,");
-        appendFormattedData(stringBuilder,motor.getKnList());
-
-        // Regression Rate
-        stringBuilder.append("Regression Rate (").append(motor.getVelocityUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getRegRateList());
-
-        // Regression
-        stringBuilder.append("Regression (").append(motor.getLengthUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getRegTotalList());
-
-        // Exit Pressure
-        stringBuilder.append("Exit Pressure (").append(motor.getPressureUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getExitPressureList());
-
-        // Force Coefficient
-        stringBuilder.append("Force Coefficient,");
-        appendFormattedData(stringBuilder,motor.getChamberPressureList());
-
-        // Free Volume
-        stringBuilder.append("Free Volume (").append(motor.getVolumeUnits()).append("),");
-        appendFormattedData(stringBuilder,motor.getFreeVolumeList());
-
-        // Volume Loading
-        stringBuilder.append("Volume Loading,");
-        appendFormattedData(stringBuilder,motor.getVolumeLoadingList());
-
+        formattedData.add("Time (" + motor.getTimeUnits() + "), Thrust(" + motor.getThrustUnits() + "), Chamber Pressure(" + motor.getPressureUnits()
+                + "), Mass Flow(" + motor.getMassFlowUnits() + "), Mass Ejected (" + motor.getMassUnits() + "), Mass Flux (" + motor.getMassFluxUnits()
+                + "), Burn Area (" + motor.getAreaUnits() + "), Kn" + ", Regression Rate (" + motor.getVelocityUnits() + "), Regression (" + motor.getLengthUnits()
+                + "), Exit Pressure (" + motor.getPressureUnits() + "), Force Coefficient" + ", Free Volume (" + motor.getVolumeUnits()
+                + "), Volume Loading");
+        for (int i = 0; i < motor.getCounter(); i++) {
+            String timeStr = motor.getTimeList().get(i) + ",";
+            String thrustStr = motor.getThrustList().get(i) + ",";
+            String chamberPressureStr = motor.getChamberPressureList().get(i) + ",";
+            String massFlowStr = motor.getMassFlowList().get(i) + ",";
+            String massEjectStr = motor.getMassEjectedList().get(i) + ",";
+            String massFluxStr = motor.getMassFluxList().get(i) + ",";
+            String burnAreaStr = motor.getBurnAreaList().get(i) + ",";
+            String knStr = motor.getKnList().get(i) + ",";
+            String regRateStr = motor.getRegRateList().get(i) + ",";
+            String regTotalStr = motor.getRegTotalList().get(i) + ",";
+            String exitPressureStr = motor.getExitPressureList().get(i) + ",";
+            String forceCoeffStr = motor.getForceCoeffList().get(i) + ",";
+            String freeVolStr = motor.getFreeVolumeList().get(i) + ",";
+            String volLoadStr = motor.getVolumeLoadingList().get(i) + ",";
+            formattedData.add(timeStr+thrustStr+chamberPressureStr+massFlowStr+massEjectStr+massFluxStr+burnAreaStr+knStr+
+                    regRateStr+regTotalStr+exitPressureStr+forceCoeffStr+freeVolStr+volLoadStr);
+        }
     }
 
     public void exportCsvFile() throws IOException {
-        File file = new File(filename + ".csv");
+        String motorName = motor.getMotorName();
+        if (Objects.isNull(motorName)) { // Auto assign name
+            motorName = "myMotor";
+        }
+        int i = 0;
+        File file = new File(motorName + ".csv");
+        while (file.isFile()) {
+            i++;
+            file = new File(motorName + "_v" + i + ".csv");
+        }
+
         FileWriter fileWriter = new FileWriter(file);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         for (String formattedDatum : formattedData) {
