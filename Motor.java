@@ -31,10 +31,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class Motor {
+    private String motorName = null;
     // create objects
     private Propellant propellant = new Propellant();
     private Nozzle nozzle = new Nozzle();
-    //private Grain[] grainList = new Grain[0];
     private ArrayList<Grain>  grainList;
 
     private boolean SIUnits = true;
@@ -396,6 +396,9 @@ public class Motor {
     }
     public void setSIUnits(boolean b) {
         this.SIUnits = b;
+    }
+    public void setMotorName(String motorName) {
+        this.motorName = motorName;
     }
 
     // Getters

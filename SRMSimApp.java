@@ -37,7 +37,7 @@ public class SRMSimApp extends Application {
     private Pane staticResultsPane;
 
     // Menu Bar
-    private final MenuItem closeMI, loadPresetPropMI,loadPresetNozMI, loadPresetCrossMI, loadPresetBatesMI, loadAllPreset;
+    private final MenuItem closeMI, loadPresetPropMI,loadPresetNozMI, loadPresetCrossMI, loadPresetBatesMI, loadAllPreset, exportPerformanceMI;
     private final RadioMenuItem engUnitToggle;
     private final Menu fileMenu, optionsMenu, loadPresetGrainSubMenu, helpMenu;
     private final MenuBar mainMenu;
@@ -81,6 +81,7 @@ public class SRMSimApp extends Application {
         loadAllPreset = new MenuItem("Load Random Preset Motor");
         loadPresetGrainSubMenu = new Menu("Load Preset Grain");
         loadPresetGrainSubMenu.getItems().addAll(loadPresetCrossMI, loadPresetBatesMI);
+        exportPerformanceMI = new MenuItem("Export .CSV");
         engUnitToggle = new RadioMenuItem("English Units");
         fileMenu = new Menu("File");
         fileMenu.getItems().addAll(closeMI);
@@ -243,11 +244,14 @@ public class SRMSimApp extends Application {
 
     public void changeMenuBar(boolean fromHomePane) {
         if (fromHomePane) {
-            /* TODO Add file I/O here */
+            fileMenu.getItems().clear();
+            fileMenu.getItems().addAll(exportPerformanceMI, closeMI);
             optionsMenu.getItems().removeAll(loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
             optionsMenu.fire();
         }
-        else if (!(optionsMenu.getItems().contains(loadPresetPropMI) && optionsMenu.getItems().contains(loadPresetNozMI) && optionsMenu.getItems().contains(loadPresetGrainSubMenu) && optionsMenu.getItems().contains(loadAllPreset))) { // to home pane
+        //else if (!(optionsMenu.getItems().contains(loadPresetPropMI) && optionsMenu.getItems().contains(loadPresetNozMI) && optionsMenu.getItems().contains(loadPresetGrainSubMenu) && optionsMenu.getItems().contains(loadAllPreset))) { // to home pane
+        else {
+            fileMenu.getItems().remove(exportPerformanceMI);
             optionsMenu.getItems().addAll(loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
         }
     }

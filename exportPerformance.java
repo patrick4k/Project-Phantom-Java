@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class exportPerformance {
     private Motor motor;
@@ -51,6 +50,49 @@ public class exportPerformance {
         stringBuilder.append("Chamber Pressure (").append(motor.getPressureUnits()).append("),");
         appendFormattedData(stringBuilder,motor.getChamberPressureList());
 
+        // Mass Flow
+        stringBuilder.append("Mass Flow (").append(motor.getMassFlowUnits()).append("),");
+        appendFormattedData(stringBuilder,motor.getMassFlowList());
+
+        // Mass Ejected
+        stringBuilder.append("Mass Ejected (").append(motor.getMassUnits()).append("),");
+        appendFormattedData(stringBuilder,motor.getMassEjectedList());
+
+        // Mass Flux
+        stringBuilder.append("Mass Flux (").append(motor.getMassFluxUnits()).append("),");
+        appendFormattedData(stringBuilder,motor.getMassFluxList());
+
+        // Burn Area
+        stringBuilder.append("Burn Area (").append(motor.getAreaUnits()).append("),");
+        appendFormattedData(stringBuilder,motor.getBurnAreaList());
+
+        // Kn
+        stringBuilder.append("Kn,");
+        appendFormattedData(stringBuilder,motor.getKnList());
+
+        // Regression Rate
+        stringBuilder.append("Regression Rate (").append(motor.getVelocityUnits()).append("),");
+        appendFormattedData(stringBuilder,motor.getRegRateList());
+
+        // Regression
+        stringBuilder.append("Regression (").append(motor.getLengthUnits()).append("),");
+        appendFormattedData(stringBuilder,motor.getRegTotalList());
+
+        // Exit Pressure
+        stringBuilder.append("Exit Pressure (").append(motor.getPressureUnits()).append("),");
+        appendFormattedData(stringBuilder,motor.getExitPressureList());
+
+        // Force Coefficient
+        stringBuilder.append("Force Coefficient,");
+        appendFormattedData(stringBuilder,motor.getChamberPressureList());
+
+        // Free Volume
+        stringBuilder.append("Free Volume (").append(motor.getVolumeUnits()).append("),");
+        appendFormattedData(stringBuilder,motor.getFreeVolumeList());
+
+        // Volume Loading
+        stringBuilder.append("Volume Loading,");
+        appendFormattedData(stringBuilder,motor.getVolumeLoadingList());
 
     }
 
@@ -58,7 +100,6 @@ public class exportPerformance {
         File file = new File(filename + ".csv");
         FileWriter fileWriter = new FileWriter(file);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
         for (String formattedDatum : formattedData) {
             bufferedWriter.write(formattedDatum);
             bufferedWriter.newLine();

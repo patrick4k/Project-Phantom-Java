@@ -94,6 +94,7 @@ public class test {
         //testMotor.setMotorVolume((Math.PI/4)*(0.04445)*(4*0.12065));
         testMotor.setAtmPressure(101325);
         testMotor.setDt(1E-3);
+        testMotor.setMotorName("testMotor_CROSS");
         return testMotor;
     }
 
