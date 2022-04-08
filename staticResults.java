@@ -7,57 +7,54 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 public class staticResults {
     private Motor motor;
 
     private double panHeight, paneWidth;
-    private Label staticResultsTitle, maxThrustLabel, avgThrustLabel, maxChamberPressureLabel, burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel;
-    private Pane staticResultsPane;
+    private ArrayList<Label> staticResultLabels;
+    private Label staticResultsTitle;
 
+    private Pane staticResultsPane;
 
     public staticResults(Motor motor, double paneHeight, double paneWidth) {
         this.motor = motor;
         this.panHeight = paneHeight;
         this.paneWidth = paneWidth;
 
-        staticResultsTitle = new Label("Thats a lot of power!");
-        maxThrustLabel = new Label("Max Thrust = " + roundToSigFigs(motor.getMaxThrust(), 6) + " " + motor.getThrustUnits());
-        avgThrustLabel = new Label("Average Thrust = " + roundToSigFigs(motor.getAvgThrust(),6) + " " + motor.getThrustUnits());
-        maxChamberPressureLabel = new Label("Max Chamber Pressure = " + roundToSigFigs(motor.getMaxChamberPressure(),5) + " " + motor.getPressureUnits());
-        burnTimeLabel = new Label("Burn Time = " + roundToSigFigs(motor.getBurnTime(),6) + " s");
-        ispLabel = new Label("ISP = " + roundToSigFigs(motor.getISP(), 6) + " " + motor.getTimeUnits());
-        cStarLabel = new Label("C* = " + roundToSigFigs(motor.getcStar(), 6) + " " + motor.getVelocityUnits());
-        initialKnLabel = new Label("Initial Kn = " + roundToSigFigs(motor.getInitalKn(), 6));
-        maxKnLabel = new Label("Max Kn = " + roundToSigFigs(motor.getMaxKn(), 6));
+        staticResultsTitle = new Label(motor.getMotorName() + " Static Results");
+        staticResultsTitle.setFont(Font.font(null, FontWeight.BOLD, 16));
+        staticResultsTitle.setLayoutX(60);
+        staticResultsTitle.setLayoutY(10);
 
-        staticResultsTitle.setFont(new Font("Comic Sans MS", 20));
+        // Create new Labels
+        staticResultLabels = new ArrayList<>();
+        staticResultLabels.add(new Label("Max Thrust = " + roundToSigFigs(motor.getMaxThrust(), 6) + " " + motor.getThrustUnits()));
+        staticResultLabels.add(new Label("Average Thrust = " + roundToSigFigs(motor.getAvgThrust(),6) + " " + motor.getThrustUnits()));
+        staticResultLabels.add(new Label("Max Chamber Pressure = " + roundToSigFigs(motor.getMaxChamberPressure(),5) + " " + motor.getPressureUnits()));
+        staticResultLabels.add(new Label("Burn Time = " + roundToSigFigs(motor.getBurnTime(),6) + " " + motor.getTimeUnits()));
+        staticResultLabels.add(new Label("Impulse = " + roundToSigFigs(motor.getImpulse(),6) + " " + motor.getImpulseUnits()));
+        staticResultLabels.add(new Label("ISP = " + roundToSigFigs(motor.getISP(), 6) + " " + motor.getTimeUnits()));
+        staticResultLabels.add(new Label("C* = " + roundToSigFigs(motor.getcStar(), 6) + " " + motor.getVelocityUnits()));
+        staticResultLabels.add(new Label("Initial Kn = " + roundToSigFigs(motor.getInitalKn(), 6)));
+        staticResultLabels.add(new Label("Max Kn = " + roundToSigFigs(motor.getMaxKn(), 6)));
 
-        staticResultsTitle.setLayoutX(.5*paneWidth - 85);
-        staticResultsTitle.setLayoutY(.1*paneHeight);
-        maxThrustLabel.setLayoutX(50);
-        maxThrustLabel.setLayoutY(125);
-        avgThrustLabel.setLayoutX(50);
-        avgThrustLabel.setLayoutY(150);
-        maxChamberPressureLabel.setLayoutX(50);
-        maxChamberPressureLabel.setLayoutY(175);
-        burnTimeLabel.setLayoutX(50);
-        burnTimeLabel.setLayoutY(200);
-        ispLabel.setLayoutX(50);
-        ispLabel.setLayoutY(225);
-        cStarLabel.setLayoutX(50);
-        cStarLabel.setLayoutY(250);
-        initialKnLabel.setLayoutX(50);
-        initialKnLabel.setLayoutY(275);
-        maxKnLabel.setLayoutX(50);
-        maxKnLabel.setLayoutY(300);
-
+        // Setup font and position for each label
+        double i = 0;
+        for (Label label:staticResultLabels) {
+            label.setLayoutX(50);
+            label.setLayoutY(125 + i);
+            label.setFont(Font.font(null,14));
+            i+= 40;
+        }
 
         staticResultsPane = new Pane();
-        staticResultsPane.getChildren().addAll(staticResultsTitle, maxThrustLabel, avgThrustLabel, maxChamberPressureLabel,
-                burnTimeLabel, ispLabel, cStarLabel, initialKnLabel, maxKnLabel);
+        staticResultsPane.getChildren().add(staticResultsTitle);
+        staticResultsPane.getChildren().addAll(staticResultLabels);
     }
 
     public String roundToSigFigs(double value, int sigFigs) {

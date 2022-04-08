@@ -13,7 +13,9 @@ In SRMSimApp.java:
  */
 import javafx.application.Application;
 import javafx.scene.control.*;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -52,15 +54,15 @@ public class SRMSimApp extends Application {
     private final Button backToPlotButton;
 
     // Exceptions
-    //private final Label propExcepLabel, nozzExceptLabel, grainExcepLabel;
     private Label exceptionLabel;
     private BorderPane exceptionBorder;
     private Stage exceptionStage;
     private Pane exceptionPane;
 
-    // Plot Select addons
+    // Addons
     private final ChoiceBox<String> plotSelect;
     private Label plotHeaderLabel;
+    private Line topBorderLine;
 
     // Doubles
     private final double paneHeight;
@@ -120,9 +122,10 @@ public class SRMSimApp extends Application {
         backToPlotButton.setLayoutY(10);
 
         // General Setup
+        topBorderLine = new Line(0,45,paneWidth,45);
         borderPane = new BorderPane();
         homePane = new Pane();
-        homePane.getChildren().addAll(runSimButton);
+        homePane.getChildren().addAll(runSimButton, topBorderLine);
         plotSelect = new ChoiceBox<>();
         plotSelect.getItems().addAll("Thrust vs Time","Chamber Pressure vs Time","Mass Flow vs Time", "Mass Ejected vs Time",
                 "Mass Flux vs Time", "Burn Area vs Time", "Burn Area vs Regression", "Kn vs Time", "Regression Rate vs Time", "Regression vs Time",
@@ -233,11 +236,11 @@ public class SRMSimApp extends Application {
             plotArrayList plot = new plotArrayList(xArr,yArr,paneHeight,paneWidth, xAxisTitle, yAxisTitle);
             plotSelect.setValue(plotTitleText);
             plotPane = plot.getPlotPane();
-            plotHeaderLabel = new Label(motor.getMotorName() + " simulation results");
-            /* TODO Center Label */
-            plotHeaderLabel.layoutXProperty().bind(plotPane.widthProperty().subtract(plotPane.widthProperty()).divide(2));
-            plotHeaderLabel.layoutYProperty().bind(plotPane.heightProperty().subtract(plotPane.heightProperty()).divide(2));
-            plotPane.getChildren().addAll(backToMainPaneButton, plotSelect, viewStaticButton, plotHeaderLabel);
+            plotHeaderLabel = new Label(motor.getMotorName() + " Performance");
+            plotHeaderLabel.setFont(Font.font(null,FontWeight.BOLD,16));
+            plotHeaderLabel.setLayoutX(60);
+            plotHeaderLabel.setLayoutY(10);
+            plotPane.getChildren().addAll(backToMainPaneButton, plotSelect, viewStaticButton, plotHeaderLabel, topBorderLine);
             borderPane.setCenter(plotPane);
         }
         else {
@@ -248,7 +251,7 @@ public class SRMSimApp extends Application {
     public void assesStaticResults() {
         staticResults staticResults = new staticResults(motor, paneHeight, paneWidth);
         staticResultsPane = staticResults.getStaticResultsPane();
-        staticResultsPane.getChildren().add(backToPlotButton);
+        staticResultsPane.getChildren().addAll(backToPlotButton, topBorderLine);
         borderPane.setCenter(staticResultsPane);
     }
 
