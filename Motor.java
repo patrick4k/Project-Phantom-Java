@@ -276,7 +276,7 @@ public class Motor {
 
     public void evaluateMotor() {
         this.maxThrust = Collections.max(this.getThrustList());
-        this.maxChamberPressure = Collections.max(this.getChamberPressureList());
+        this.maxChamberPressure = (1E-6)*Collections.max(this.getChamberPressureList()); // Pa to MPa
         this.ISP = average(this.thrustList) / (9.81 * average(this.massFlowList));
         this.impulse = average(this.thrustList) * Collections.max(this.timeList);
         this.burnTime = Collections.max(this.getTimeList());
@@ -338,7 +338,7 @@ public class Motor {
                 regTotalList.set(i, (1/25.4)*regTotalList.get(i)); // mm to in
             }
             this.maxThrust = (1/4.44822)*maxThrust; // N to lbf
-            this.maxChamberPressure = (1E6)*(1/6894.76)*maxChamberPressure; // MPa to psi
+            this.maxChamberPressure = (145.038)*maxChamberPressure; // MPa to psi
             this.impulse = (1/4.44822)*impulse; // N s to lbf s
             this.cStar = propellant.getCstar() * 3.28084 * 12; // m/s to in/s
 
@@ -368,7 +368,7 @@ public class Motor {
                 regTotalList.set(i, (25.4)*regTotalList.get(i)); // in to mm
             }
             this.maxThrust = (4.44822)*maxThrust; // lbf to N
-            this.maxChamberPressure = (1E-6)*(6894.76)*maxChamberPressure; // psi to MPa
+            this.maxChamberPressure = (1/145.038)*maxChamberPressure; // psi to MPa
             this.impulse = (4.44822)*impulse; // lbf s to N s
             this.cStar = propellant.getCstar() / (3.28084*12); // in/s to m/s
 
