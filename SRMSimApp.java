@@ -68,6 +68,9 @@ public class SRMSimApp extends Application {
     private final double paneHeight;
     private final double paneWidth;
 
+    /* TODO Delete once motor input is complete */
+    String motorName;
+
     // Constructor
     public SRMSimApp() {
         paneWidth = 750;
@@ -240,7 +243,7 @@ public class SRMSimApp extends Application {
             plotHeaderLabel.setFont(Font.font(null,FontWeight.BOLD,16));
             plotHeaderLabel.setLayoutX(60);
             plotHeaderLabel.setLayoutY(10);
-            plotPane.getChildren().addAll(backToMainPaneButton, plotSelect, viewStaticButton, plotHeaderLabel, topBorderLine);
+            plotPane.getChildren().addAll(backToMainPaneButton, plotSelect, viewStaticButton, plotHeaderLabel);
             borderPane.setCenter(plotPane);
         }
         else {
@@ -251,8 +254,7 @@ public class SRMSimApp extends Application {
     public void assesStaticResults() {
         staticResults staticResults = new staticResults(motor, paneHeight, paneWidth);
         staticResultsPane = staticResults.getStaticResultsPane();
-        staticResultsPane.getChildren().addAll(backToPlotButton, topBorderLine);
-        borderPane.setCenter(staticResultsPane);
+        staticResultsPane.getChildren().addAll(backToPlotButton);
     }
 
     public void changeMenuBar(boolean fromHomePane) {
@@ -277,7 +279,7 @@ public class SRMSimApp extends Application {
         runSimButton.setOnMouseClicked(event -> {
             /*TODO asses input text fields and assign to new Prop Nozz and grainList */
             this.motor = new Motor(propellant,nozzle,grains);
-            this.motor.setMotorName("BATES300");
+            this.motor.setMotorName(motorName);
             try {
                 this.motor.runSim();
                 changeMenuBar(true);
@@ -340,12 +342,14 @@ public class SRMSimApp extends Application {
             else if ((simCompleted) && (borderPane.getCenter() == staticResultsPane)) {
                 motor.convertResult(engUnitToggle.isSelected());
                 assesStaticResults();
+                borderPane.setCenter(staticResultsPane);
             }
         });
 
         // Update and view 
         viewStaticButton.setOnAction(event -> {
             assesStaticResults();
+            borderPane.setCenter(staticResultsPane);
         });
 
         // Exit Static results, return to plot pane
@@ -366,10 +370,12 @@ public class SRMSimApp extends Application {
         // Load Preset for cross grain
         loadPresetCrossMI.setOnAction(event -> {
             this.grains = test.loadPresetCross();
+            motorName = "Cross Preset";
         });
         // Load Preset for BATES grain
         loadPresetBatesMI.setOnAction((event -> {
             this.grains = test.loadPresetBates();
+            motorName = "BATES Preset";
         }));
 
         // Load All Presets
@@ -378,9 +384,11 @@ public class SRMSimApp extends Application {
             this.nozzle = test.loadPresetNozzle();
             if (Math.random() > 0.5) {
                 this.grains = test.loadPresetBates();
+                motorName = "BATES Preset";
             }
             else {
                 this.grains = test.loadPresetCross();
+                motorName = "Cross Preset";
             }
         }));
 

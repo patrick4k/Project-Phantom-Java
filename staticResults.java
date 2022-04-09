@@ -12,6 +12,7 @@ import javafx.scene.layout.Pane;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
@@ -21,6 +22,7 @@ public class staticResults {
     private double panHeight, paneWidth;
     private ArrayList<Label> staticResultLabels;
     private Label staticResultsTitle;
+    private Line topBorderLine;
 
     private Pane staticResultsPane;
 
@@ -28,6 +30,7 @@ public class staticResults {
         this.motor = motor;
         this.panHeight = paneHeight;
         this.paneWidth = paneWidth;
+        topBorderLine = new Line(0,45,paneWidth,45);
 
         staticResultsTitle = new Label(motor.getMotorName() + " Static Results");
         staticResultsTitle.setFont(Font.font(null, FontWeight.BOLD, 16));
@@ -56,7 +59,7 @@ public class staticResults {
         }
 
         staticResultsPane = new Pane();
-        staticResultsPane.getChildren().add(staticResultsTitle);
+        staticResultsPane.getChildren().addAll(topBorderLine, staticResultsTitle);
         staticResultsPane.getChildren().addAll(staticResultLabels);
     }
 

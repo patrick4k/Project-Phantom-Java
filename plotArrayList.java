@@ -34,12 +34,14 @@ public class plotArrayList {
     private Label[] yAxisLabels;
     private Label xAxisTitle;
     private Label yAxisTitle;
+    private Line topBorderLine;
 
     public plotArrayList(ArrayList<Double> arrX, ArrayList<Double> arrY, double paneHeight, double paneWidth, String xAxisText, String yAxisText) {
         this.arrX = arrX;
         this.arrY = arrY;
         this.paneHeight = paneHeight;
         this.paneWidth = paneWidth;
+        topBorderLine = new Line(0,45,paneWidth,45);
         maxHeight = 0.5*paneHeight;
         maxWidth = 0.5*paneWidth;
         pointRadius = 1;
@@ -146,7 +148,7 @@ public class plotArrayList {
         scaleData();
         scaleAxis();
         plotPane.getChildren().clear();
-        plotPane.getChildren().addAll(plotBorderBlackEdge, plotBorderWhiteFill, xAxisTitle, yAxisTitle);
+        plotPane.getChildren().addAll(topBorderLine, plotBorderBlackEdge, plotBorderWhiteFill, xAxisTitle, yAxisTitle);
         plotPane.getChildren().addAll(xAxisLabels);
         plotPane.getChildren().addAll(yAxisLabels);
         plotPane.getChildren().addAll(hLines);
