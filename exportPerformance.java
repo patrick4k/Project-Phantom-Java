@@ -1,5 +1,11 @@
-import com.sun.xml.internal.fastinfoset.util.StringArray;
+/*
+Export Performance class
+By Patrick Kennedy
+Date Modified: 4/8/22
 
+Export Performance class imports a motor and creates csv file of performance, the name of the file is the motor name and if there are
+duplicates the file saved will include a version number attached
+ */
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

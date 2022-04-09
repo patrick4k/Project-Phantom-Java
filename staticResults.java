@@ -1,14 +1,17 @@
-import javafx.geometry.Pos;
+/*
+Static Results class
+By Patrick Kennedy
+Date Modified: 4/8/22
+
+Static Results imports a motor post simulation and creates a pane of labels that display static properties calculated
+in the motor class. An ArrayList of labels is used for easier placement manipulation and later modification
+ */
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
-import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 

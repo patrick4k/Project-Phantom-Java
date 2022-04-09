@@ -1,4 +1,10 @@
-import java.math.BigDecimal;
+/*
+Plot arrayList class
+By Patrick Kennedy
+Date Modified: 4/8/22
+
+This class takes an input of two arrayList of the same size and creates a pane of a plot of those two arrayList
+ */
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
