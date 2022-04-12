@@ -6,16 +6,16 @@ Where the simulation occurs, the motor class puts other classes together to form
 Motor utilizes equations derived by Richard Nakka
  */
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
-public class Motor {
+public class Motor implements Serializable {
     private String motorName;
     // create objects
-    private Propellant propellant = new Propellant();
-    private Nozzle nozzle = new Nozzle();
-    private ArrayList<Grain>  grainList;
+    private final Propellant propellant;
+    private final Nozzle nozzle;
+    private final ArrayList<Grain>  grainList;
 
     private boolean SIUnits = true;
     private String thrustUnits = "N";

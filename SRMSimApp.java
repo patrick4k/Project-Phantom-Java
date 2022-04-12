@@ -39,7 +39,7 @@ public class SRMSimApp extends Application {
     private Pane plotPane, staticResultsPane;
 
     // Menu Bar
-    private final MenuItem closeMI, loadPresetPropMI,loadPresetNozMI, loadPresetCrossMI, loadPresetBatesMI, loadAllPreset, exportPerformanceMI;
+    private final MenuItem closeMI, loadPresetPropMI,loadPresetNozMI, loadPresetCrossMI, loadPresetBatesMI, loadAllPreset, exportPerformanceMI, exportMotorMI, importMotorMI;
     private final RadioMenuItem engUnitToggle;
     private final Menu fileMenu, optionsMenu, loadPresetGrainSubMenu, helpMenu;
     private final MenuBar mainMenu;
@@ -86,9 +86,11 @@ public class SRMSimApp extends Application {
         loadPresetGrainSubMenu = new Menu("Load Preset Grain");
         loadPresetGrainSubMenu.getItems().addAll(loadPresetCrossMI, loadPresetBatesMI);
         exportPerformanceMI = new MenuItem("Export .CSV");
+        exportMotorMI = new MenuItem("Export .motor");
+        importMotorMI = new MenuItem("Import .motor");
         engUnitToggle = new RadioMenuItem("English Units");
         fileMenu = new Menu("File");
-        fileMenu.getItems().addAll(closeMI);
+        fileMenu.getItems().addAll(importMotorMI, closeMI);
         optionsMenu = new Menu("Options");
         optionsMenu.getItems().addAll(engUnitToggle, loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
         helpMenu = new Menu("Help");
@@ -260,16 +262,18 @@ public class SRMSimApp extends Application {
     public void changeMenuBar(boolean fromHomePane) {
         if (fromHomePane) {
             fileMenu.getItems().clear();
-            fileMenu.getItems().addAll(exportPerformanceMI, closeMI);
+            fileMenu.getItems().addAll(exportPerformanceMI, exportMotorMI, closeMI);
             optionsMenu.getItems().removeAll(loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
         }
         else {
-            fileMenu.getItems().remove(exportPerformanceMI);
+            fileMenu.getItems().clear();
+            fileMenu.getItems().addAll(importMotorMI, closeMI);
             optionsMenu.getItems().addAll(loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
         }
     }
 
     public void lambdaFunctions() {
+        /* TODO Add lambda for import export of .motor files */
         // Close Application
         closeMI.setOnAction(event -> {
             System.exit(0);

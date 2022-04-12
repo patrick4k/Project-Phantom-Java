@@ -6,7 +6,9 @@ Date Modified: 4/8/22
 Cross is an extension of the Grain class, the cross grain overrides various calculation to adhere to the cross geometry
  */
 
-public class Cross extends Grain {
+import java.io.Serializable;
+
+public class Cross extends Grain implements Serializable {
     private double width;
     private double length;
 

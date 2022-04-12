@@ -7,7 +7,9 @@ The propellant class hold values of the propellant being simulated, no calculati
 with exception to cStar
  */
 
-public class Propellant {
+import java.io.Serializable;
+
+public class Propellant implements Serializable {
     private double density; // input kg/m3
     private double chamberTemp; // input K
     private double gamma; // input null

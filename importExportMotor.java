@@ -1,25 +1,47 @@
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+/*
+importExportMotor.java
+By Patrick Kennedy
+Date Modified: 4/12/21
+This class is used to import and export a motor, this creates a custom file type of ".motor" that stores serialized attributes
+of a motor
+ */
+
+import java.io.*;
+import java.util.Objects;
 
 public class importExportMotor {
-    private Motor motor;
 
-    public static void main(String[] args) {
-        test test = new test();
-        Motor motor = test.initMotor();
-        exportMotor(motor);
-    }
-
-    public static void exportMotor(Motor motor) {
+    public void exportMotor(Motor motor) {
         try {
-            FileOutputStream saveFile = new FileOutputStream(motor.getMotorName() + ".txt");
+            String motorName = motor.getMotorName();
+            if (Objects.isNull(motorName)) { // Auto assign name
+                motorName = "myMotor";
+            }
+            int i = 0;
+            File file = new File(motorName + ".motor");
+            while (file.isFile()) {
+                i++;
+                file = new File(motorName + "(" + i + ").motor");
+            }
+            FileOutputStream saveFile = new FileOutputStream(file.getName());
             ObjectOutputStream save = new ObjectOutputStream(saveFile);
             save.writeObject(motor);
             save.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Motor importMotor(String filename) {
+        Motor motor = null;
+        try {
+            FileInputStream openFile = new FileInputStream(filename);
+            ObjectInputStream open = new ObjectInputStream(openFile);
+            motor = (Motor) open.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return motor;
     }
 
 

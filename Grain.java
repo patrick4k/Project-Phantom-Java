@@ -7,7 +7,9 @@ The Grain class is an abstract class for separate grains, the Grain class holds 
 and allows adaptability for different grain geometries
  */
 
-public class Grain {
+import java.io.Serializable;
+
+public class Grain implements Serializable {
     private double outerDiameter;
     private double grainLength;
     private double inhibitedEnds;

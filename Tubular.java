@@ -6,7 +6,9 @@ Date Modified: 4/8/22
 Tubular is an extension of the Grain class, the Tubular grain overrides various calculation to adhere to the tubular geometry
  */
 
-public class Tubular extends Grain{
+import java.io.Serializable;
+
+public class Tubular extends Grain implements Serializable {
     private double innerDiameter;
 
     @Override

@@ -6,7 +6,9 @@ Bate Modified: 4/8/22
 The nozzle class hold values of the nozzle being simulated, no calculations are performed within the nozzle class
  */
 
-public class Nozzle {
+import java.io.Serializable;
+
+public class Nozzle implements Serializable {
     double throatDiameter;
     double exitDiameter;
     double exitAngle;
