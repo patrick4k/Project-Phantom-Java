@@ -307,11 +307,10 @@ public class Motor {
         this.cStar = propellant.getCstar();
     }
 
-    /* TODO Double check conversions */
     public void convertResult(boolean toEng) {
         if ((toEng) && (isSI())) { // SI to English Units
             for (int i = 0; i < counter; i++) { // convert each list to correct units
-                burnAreaList.set(i,   Math.pow(2.54,-2)*burnAreaList.get(i)); // cm^2 to in^2
+                burnAreaList.set(i, Math.pow(2.54,-2)*burnAreaList.get(i)); // cm^2 to in^2
                 chamberPressureList.set(i, (1E6)*(1/6894.76)*chamberPressureList.get(i)); // MPa to psi
                 exitPressureList.set(i, (1E6)*(1/6894.76)*exitPressureList.get(i)); // MPa to psi
                 freeVolumeList.set(i,Math.pow(2.54,-3)*freeVolumeList.get(i)); // cm^3 to in^3
@@ -323,7 +322,7 @@ public class Motor {
                 regTotalList.set(i, (1/25.4)*regTotalList.get(i)); // mm to in
             }
             this.maxThrust = (1/4.44822)*maxThrust; // N to lbf
-            this.maxChamberPressure = (145.038)*maxChamberPressure; // MPa to psi
+            this.maxChamberPressure = (1E6)*(1/6894.76)*maxChamberPressure; // MPa to psi
             this.impulse = (1/4.44822)*impulse; // N s to lbf s
             this.cStar = propellant.getCstar() * 3.28084; // m/s to ft/s
 
@@ -353,7 +352,7 @@ public class Motor {
                 regTotalList.set(i, (25.4)*regTotalList.get(i)); // in to mm
             }
             this.maxThrust = (4.44822)*maxThrust; // lbf to N
-            this.maxChamberPressure = (1/145.038)*maxChamberPressure; // psi to MPa
+            this.maxChamberPressure = (1E-6)*(6894.76)*maxChamberPressure; // psi to MPa
             this.impulse = (4.44822)*impulse; // lbf s to N s
             this.cStar = propellant.getCstar(); // m/s
 

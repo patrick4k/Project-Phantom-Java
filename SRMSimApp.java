@@ -362,7 +362,6 @@ public class SRMSimApp extends Application {
         loadPresetPropMI.setOnAction(event -> {
             this.propellant = test.loadPresetPropellant();
         });
-
         // Load Preset Nozzle
         loadPresetNozMI.setOnAction(event -> {
             this.nozzle = test.loadPresetNozzle();

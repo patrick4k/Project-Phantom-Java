@@ -17,14 +17,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 public class staticResults {
-    private Motor motor;
+    private final Motor motor;
 
-    private double panHeight, paneWidth;
-    private ArrayList<Label> staticResultLabels;
-    private Label staticResultsTitle;
-    private Line topBorderLine;
+    private final double panHeight, paneWidth;
+    private final ArrayList<Label> staticResultLabels;
+    private final Label staticResultsTitle;
+    private final Line topBorderLine;
 
-    private Pane staticResultsPane;
+    private final Pane staticResultsPane;
 
     public staticResults(Motor motor, double paneHeight, double paneWidth) {
         this.motor = motor;
