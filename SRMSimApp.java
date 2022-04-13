@@ -123,8 +123,8 @@ public class SRMSimApp extends Application {
                 "it is important to note that a smaller nozzle throat tends to lead to higher thrust but \n" +
                 "greatly increases the chamber pressure, therefore your chamber design and nozzle \n" +
                 "design should correspond with each other. The exit angle for a nozzle is usually \n" +
-                "about 15 deg and can effect divergance loss.\n\n" +
-                "Thr grain geomotry and configuration is where the thrust curve is most effected. Since \n" +
+                "about 15 deg and can effect divergence loss.\n\n" +
+                "The grain geometry and configuration is where the thrust curve is most effected. Since \n" +
                 "thrust is proportional to burn area the grain geometry has a direct influence to the \n" +
                 "rate of change of the thrust and even the duration.");
         helpLabel.setFont(new Font(14));
@@ -133,7 +133,7 @@ public class SRMSimApp extends Application {
         helpPane = new Pane();
         helpPane.getChildren().add(helpLabel);
         helpBorder.setCenter(helpPane);
-        Scene helpScene = new Scene(helpBorder, 0.7*paneWidth, 0.45*paneHeight);
+        Scene helpScene = new Scene(helpBorder,helpLabel.getPrefWidth(), helpLabel.getPrefHeight());
         helpStage.setScene(helpScene);
         helpStage.setResizable(false);
         helpStage.setTitle("Help");
