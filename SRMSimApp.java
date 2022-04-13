@@ -98,7 +98,7 @@ public class SRMSimApp extends Application {
 
         // Motor Input setup
         /* TODO Add motor input setup */
-        motorNameInput = new TextField("Input Name");
+        motorNameInput = new TextField();
 
         // Define Run Sim button
         runSimButton = new Button("Calculate Motor Performance");
@@ -283,7 +283,12 @@ public class SRMSimApp extends Application {
         runSimButton.setOnMouseClicked(event -> {
             /*TODO asses input text fields and assign to new Prop Nozz and grainList */
             this.motor = new Motor(propellant,nozzle,grains);
-            this.motor.setMotorName(motorName);
+            if (!motorNameInput.getText().isEmpty()) {
+                this.motor.setMotorName(motorNameInput.getText());
+            }
+            else {
+                this.motor.setMotorName("myMotor");
+            }
             try {
                 this.motor.runSim();
                 changeMenuBar(true);
@@ -349,13 +354,16 @@ public class SRMSimApp extends Application {
                 borderPane.setCenter(staticResultsPane);
             }
         });
+        // Import .motor file
         importMotorMI.setOnAction(event -> {
-            /* TODO Why isnt this working */
-            Motor motorImport = dotMotorIO.importMotor("testMotor_CROSS.motor");
+            Motor motorImport = dotMotorIO.importMotor("myMotor.motor");
+            /* TODO Set all text fields to corresponding values */
             propellant = motorImport.getPropellant();
             nozzle = motorImport.getNozzle();
             grains = motorImport.getGrainList();
+            motorNameInput.setText(motorImport.getMotorName()); // <-- Do this for every input
         });
+        // Export .motor file
         exportMotorMI.setOnAction(event -> {
             dotMotorIO.exportMotor(motor);
         });
@@ -382,12 +390,10 @@ public class SRMSimApp extends Application {
         // Load Preset for cross grain
         loadPresetCrossMI.setOnAction(event -> {
             this.grains = test.loadPresetCross();
-            motorName = "Cross Preset";
         });
         // Load Preset for BATES grain
         loadPresetBatesMI.setOnAction((event -> {
             this.grains = test.loadPresetBates();
-            motorName = "BATES Preset";
         }));
 
         // Load All Presets
@@ -396,14 +402,11 @@ public class SRMSimApp extends Application {
             this.nozzle = test.loadPresetNozzle();
             if (Math.random() > 0.5) {
                 this.grains = test.loadPresetBates();
-                motorName = "BATES Preset";
             }
             else {
                 this.grains = test.loadPresetCross();
-                motorName = "Cross Preset";
             }
         }));
-
     }
 
     public static void main(String[] args) {
