@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import sun.awt.image.PNGImageDecoder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +40,8 @@ public class SRMSimApp extends Application {
     private Pane plotPane, staticResultsPane;
 
     // Menu Bar
-    private final MenuItem closeMI, loadPresetPropMI,loadPresetNozMI, loadPresetCrossMI, loadPresetBatesMI, loadAllPreset, exportPerformanceMI, exportMotorMI, importMotorMI;
+    private final MenuItem closeMI, loadPresetPropMI,loadPresetNozMI, loadPresetCrossMI, loadPresetBatesMI, loadAllPreset,
+            exportPerformanceMI, exportMotorMI, importMotorMI, helpMI;
     private final RadioMenuItem engUnitToggle;
     private final Menu fileMenu, optionsMenu, loadPresetGrainSubMenu, helpMenu;
     private final MenuBar mainMenu;
@@ -52,6 +54,12 @@ public class SRMSimApp extends Application {
     private final Button backToMainPaneButton;
     private final Button viewStaticButton;
     private final Button backToPlotButton;
+
+    // Help
+    private Label helpLabel;
+    private BorderPane helpBorder;
+    private Stage helpStage;
+    private Pane helpPane;
 
     // Exceptions
     private Label exceptionLabel;
@@ -88,12 +96,14 @@ public class SRMSimApp extends Application {
         exportPerformanceMI = new MenuItem("Export .CSV");
         exportMotorMI = new MenuItem("Export .motor");
         importMotorMI = new MenuItem("Import .motor");
+        helpMI = new MenuItem("Show Help");
         engUnitToggle = new RadioMenuItem("English Units");
         fileMenu = new Menu("File");
         fileMenu.getItems().addAll(importMotorMI, closeMI);
         optionsMenu = new Menu("Options");
         optionsMenu.getItems().addAll(engUnitToggle, loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
         helpMenu = new Menu("Help");
+        helpMenu.getItems().add(helpMI);
         mainMenu = new MenuBar(fileMenu, optionsMenu, helpMenu);
 
         // Motor Input setup
@@ -104,6 +114,30 @@ public class SRMSimApp extends Application {
         runSimButton = new Button("Calculate Motor Performance");
         runSimButton.setLayoutX((56.0/75)*paneWidth);
         runSimButton.setLayoutY(paneHeight-67.5);
+
+        // Help setup
+        helpLabel = new Label("\nPropellant is a vital component in SRM design. Common propellants \n" +
+                "is dextrose and potassium nitrate, and HTPB and AP. For aid in numeric calculations \n" +
+                "of propellant, PROPEP3 is a great resource.\n\n" +
+                "The nozzle design is another important attribute to a motor, when designing the nozzle \n" +
+                "it is important to note that a smaller nozzle throat tends to lead to higher thrust but \n" +
+                "greatly increases the chamber pressure, therefore your chamber design and nozzle \n" +
+                "design should correspond with each other. The exit angle for a nozzle is usually \n" +
+                "about 15 deg and can effect divergance loss.\n\n" +
+                "Thr grain geomotry and configuration is where the thrust curve is most effected. Since \n" +
+                "thrust is proportional to burn area the grain geometry has a direct influence to the \n" +
+                "rate of change of the thrust and even the duration.");
+        helpLabel.setFont(new Font(14));
+        helpBorder = new BorderPane();
+        helpStage = new Stage();
+        helpPane = new Pane();
+        helpPane.getChildren().add(helpLabel);
+        helpBorder.setCenter(helpPane);
+        Scene helpScene = new Scene(helpBorder, 0.7*paneWidth, 0.45*paneHeight);
+        helpStage.setScene(helpScene);
+        helpStage.setResizable(false);
+        helpStage.setTitle("Help");
+        helpStage.setAlwaysOnTop(true);
 
         // Exception setup
         exceptionBorder = new BorderPane();
@@ -294,12 +328,12 @@ public class SRMSimApp extends Application {
                 changeMenuBar(true);
                 simCompleted = true;
                 exceptionStage.close();
+                helpStage.close();
                 if (engUnitToggle.isSelected()) {
                     motor.convertResult(true);
                 }
                 updatePlotPane(motor.getTimeList(),motor.getThrustList(), "Thrust vs Time", motor.getTimeUnits(), motor.getThrustUnits());
             } catch (Exception e) {
-                System.out.println("Exception");
                 StringBuilder errorStringBuilder = new StringBuilder("Sim could not run with current config\n\n");
                 if (Objects.isNull(propellant)) {
                     errorStringBuilder.append("Propellant Necessary for Simulation\n\n");
@@ -407,6 +441,12 @@ public class SRMSimApp extends Application {
                 this.grains = test.loadPresetCross();
             }
         }));
+
+        // Help menu item
+        helpMI.setOnAction(event -> {
+            helpStage.close();
+            helpStage.show();
+        });
     }
 
     public static void main(String[] args) {
