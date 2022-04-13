@@ -349,7 +349,16 @@ public class SRMSimApp extends Application {
                 borderPane.setCenter(staticResultsPane);
             }
         });
-
+        importMotorMI.setOnAction(event -> {
+            /* TODO Why isnt this working */
+            Motor motorImport = dotMotorIO.importMotor("testMotor_CROSS.motor");
+            propellant = motorImport.getPropellant();
+            nozzle = motorImport.getNozzle();
+            grains = motorImport.getGrainList();
+        });
+        exportMotorMI.setOnAction(event -> {
+            dotMotorIO.exportMotor(motor);
+        });
         // Update and view 
         viewStaticButton.setOnAction(event -> {
             assesStaticResults();

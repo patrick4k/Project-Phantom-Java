@@ -9,9 +9,9 @@ of a motor
 import java.io.*;
 import java.util.Objects;
 
-public class importExportMotor {
+public class dotMotorIO {
 
-    public void exportMotor(Motor motor) {
+    public static void exportMotor(Motor motor) {
         try {
             String motorName = motor.getMotorName();
             if (Objects.isNull(motorName)) { // Auto assign name
@@ -32,7 +32,7 @@ public class importExportMotor {
         }
     }
 
-    public Motor importMotor(String filename) {
+    public static Motor importMotor(String filename) {
         Motor motor = null;
         try {
             FileInputStream openFile = new FileInputStream(filename);

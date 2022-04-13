@@ -388,6 +388,12 @@ public class Motor implements Serializable {
     public Propellant getPropellant() {
         return propellant;
     }
+    public Nozzle getNozzle() {
+        return nozzle;
+    }
+    public ArrayList<Grain> getGrainList() {
+        return grainList;
+    }
     public String getMotorName() {
         return motorName;
     }
