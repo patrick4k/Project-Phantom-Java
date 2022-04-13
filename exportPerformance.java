@@ -15,8 +15,7 @@ import java.util.Objects;
 
 public class exportPerformance {
     private final Motor motor;
-    private ArrayList<String> formattedData;
-    private String filename;
+    private final ArrayList<String> formattedData = new ArrayList<>();
 
     public exportPerformance(Motor motor) throws IOException {
         this.motor = motor;
@@ -25,7 +24,6 @@ public class exportPerformance {
     }
 
     public void extractMotorData() {
-        formattedData = new ArrayList<>();
         formattedData.add("Time (" + motor.getTimeUnits() + "), Thrust(" + motor.getThrustUnits() + "), Chamber Pressure(" + motor.getPressureUnits()
                 + "), Mass Flow(" + motor.getMassFlowUnits() + "), Mass Ejected (" + motor.getMassUnits() + "), Mass Flux (" + motor.getMassFluxUnits()
                 + "), Burn Area (" + motor.getAreaUnits() + "), Kn" + ", Regression Rate (" + motor.getVelocityUnits() + "), Regression (" + motor.getLengthUnits()

@@ -64,21 +64,21 @@ public class Motor implements Serializable {
     private double dt = 1E-3; // default to 1E-3s
 
     // arrays
-    private ArrayList<Double> chamberPressureList = new ArrayList<Double>();
-    private ArrayList<Double> exitPressureList = new ArrayList<Double>();
-    private ArrayList<Double> burnAreaList = new ArrayList<Double>();
-    private ArrayList<Double> knList = new ArrayList<Double>();
-    private ArrayList<Double> freeVolumeList = new ArrayList<Double>();
-    private ArrayList<Double> volumeLoadingList = new ArrayList<Double>();
-    private ArrayList<Double> massFlowList = new ArrayList<Double>();
-    private ArrayList<Double> massFluxList = new ArrayList<Double>();
-    private ArrayList<Double> massEjectedList = new ArrayList<Double>();
-    private ArrayList<Double> regRateList = new ArrayList<Double>();
-    private ArrayList<Double> regStepList = new ArrayList<Double>();
-    private ArrayList<Double> regTotalList = new ArrayList<Double>();
-    private ArrayList<Double> forceCoeffList = new ArrayList<Double>();
-    private ArrayList<Double> thrustList = new ArrayList<Double>();
-    private ArrayList<Double> timeList = new ArrayList<Double>();
+    private final ArrayList<Double> chamberPressureList = new ArrayList<Double>();
+    private final ArrayList<Double> exitPressureList = new ArrayList<Double>();
+    private final ArrayList<Double> burnAreaList = new ArrayList<Double>();
+    private final ArrayList<Double> knList = new ArrayList<Double>();
+    private final ArrayList<Double> freeVolumeList = new ArrayList<Double>();
+    private final ArrayList<Double> volumeLoadingList = new ArrayList<Double>();
+    private final ArrayList<Double> massFlowList = new ArrayList<Double>();
+    private final ArrayList<Double> massFluxList = new ArrayList<Double>();
+    private final ArrayList<Double> massEjectedList = new ArrayList<Double>();
+    private final ArrayList<Double> regRateList = new ArrayList<Double>();
+    private final ArrayList<Double> regStepList = new ArrayList<Double>();
+    private final ArrayList<Double> regTotalList = new ArrayList<Double>();
+    private final ArrayList<Double> forceCoeffList = new ArrayList<Double>();
+    private final ArrayList<Double> thrustList = new ArrayList<Double>();
+    private final ArrayList<Double> timeList = new ArrayList<Double>();
 
     public Motor(Propellant propellant,Nozzle nozzle, ArrayList<Grain> grainList) {
         this.propellant = propellant;

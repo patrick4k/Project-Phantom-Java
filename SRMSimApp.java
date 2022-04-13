@@ -392,10 +392,13 @@ public class SRMSimApp extends Application {
         importMotorMI.setOnAction(event -> {
             Motor motorImport = dotMotorIO.importMotor("myMotor.motor");
             /* TODO Set all text fields to corresponding values */
-            propellant = motorImport.getPropellant();
-            nozzle = motorImport.getNozzle();
-            grains = motorImport.getGrainList();
-            motorNameInput.setText(motorImport.getMotorName()); // <-- Do this for every input
+            try {
+                propellant = motorImport.getPropellant();
+                nozzle = motorImport.getNozzle();
+                grains = motorImport.getGrainList();
+                motorNameInput.setText(motorImport.getMotorName()); // <-- Do this for every input
+            } catch (Exception ignored) {
+            }
         });
         // Export .motor file
         exportMotorMI.setOnAction(event -> {
