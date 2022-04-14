@@ -38,6 +38,7 @@ public class dotMotorIO {
             FileInputStream openFile = new FileInputStream(filename);
             ObjectInputStream open = new ObjectInputStream(openFile);
             motor = (Motor) open.readObject();
+            open.close();
         } catch (IOException | ClassNotFoundException ignored) {
         }
         return motor;

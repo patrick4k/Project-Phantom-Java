@@ -390,7 +390,8 @@ public class SRMSimApp extends Application {
         });
         // Import .motor file
         importMotorMI.setOnAction(event -> {
-            Motor motorImport = dotMotorIO.importMotor("myMotor.motor");
+            String filename = "myMotor.motor"; // <-- add input for this step / text-field maybe?
+            Motor motorImport = dotMotorIO.importMotor(filename);
             /* TODO Set all text fields to corresponding values */
             try {
                 propellant = motorImport.getPropellant();
