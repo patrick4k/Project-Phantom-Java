@@ -12,6 +12,7 @@ In SRMSimApp.java:
  SRMSimApp.java creates new panes and commits these panes to the borderPane using other classes
  */
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -48,6 +49,10 @@ public class SRMSimApp extends Application {
 
     // Motor Input
     private TextField motorNameInput;
+    private ArrayList<Label> nozzLabels = new ArrayList<>();
+    private ArrayList<Label> propLabels = new ArrayList<>();
+    private ArrayList<TextField> nozzInputs = new ArrayList<>();
+    private ArrayList<TextField> propInputs = new ArrayList<>();
 
     // Buttons
     private final Button runSimButton;
@@ -108,7 +113,18 @@ public class SRMSimApp extends Application {
 
         // Motor Input setup
         /* TODO Add motor input setup */
+        Label motorNameInputLabel = new Label("Motor Name:");
+        motorNameInputLabel.setFont(new Font(14));
+        motorNameInputLabel.setLayoutX(10);
+        motorNameInputLabel.setLayoutY(10);
         motorNameInput = new TextField();
+        motorNameInput.setLayoutX(100);
+        motorNameInput.setLayoutY(10);
+        Label nozzLabel = new Label("Nozzle Design:");
+        nozzLabel.setFont(new Font(15));
+        nozzLabel.setLayoutX(15);
+        nozzLabel.setLayoutY(50);
+        designInput throatDiameterInput = new designInput("Throat Diameter:", "(cm)",15, 75);
 
         // Define Run Sim button
         runSimButton = new Button("Calculate Motor Performance");
@@ -133,7 +149,7 @@ public class SRMSimApp extends Application {
         helpPane = new Pane();
         helpPane.getChildren().add(helpLabel);
         helpBorder.setCenter(helpPane);
-        Scene helpScene = new Scene(helpBorder,helpLabel.getPrefWidth(), helpLabel.getPrefHeight());
+        Scene helpScene = new Scene(helpBorder);
         helpStage.setScene(helpScene);
         helpStage.setResizable(false);
         helpStage.setTitle("Help");
@@ -164,7 +180,10 @@ public class SRMSimApp extends Application {
         topBorderLine = new Line(0,45,paneWidth,45);
         borderPane = new BorderPane();
         homePane = new Pane();
-        homePane.getChildren().addAll(runSimButton, topBorderLine);
+        /* TODO Add all nodes to home pane */
+        homePane.getChildren().addAll(runSimButton, topBorderLine, motorNameInput, motorNameInputLabel, nozzLabel);
+        homePane.getChildren().addAll(throatDiameterInput.getNodeArr());
+
         plotSelect = new ChoiceBox<>();
         plotSelect.getItems().addAll("Thrust vs Time","Chamber Pressure vs Time","Mass Flow vs Time", "Mass Ejected vs Time",
                 "Mass Flux vs Time", "Burn Area vs Time", "Burn Area vs Regression", "Kn vs Time", "Regression Rate vs Time", "Regression vs Time",
