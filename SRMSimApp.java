@@ -53,6 +53,8 @@ public class SRMSimApp extends Application {
     private ArrayList<Label> propLabels = new ArrayList<>();
     private ArrayList<TextField> nozzInputs = new ArrayList<>();
     private ArrayList<TextField> propInputs = new ArrayList<>();
+    private final designInput throatDiameterInput, exitDiameterInput, exitAngleInput;
+    private final designInput densityInput, chamberTempInput, gammaInput, burnRateCoeffInput, burnRateExpInput, molarMassInput;
 
     // Buttons
     private final Button runSimButton;
@@ -120,11 +122,25 @@ public class SRMSimApp extends Application {
         motorNameInput = new TextField();
         motorNameInput.setLayoutX(100);
         motorNameInput.setLayoutY(10);
-        Label nozzLabel = new Label("Nozzle Design:");
+        Label nozzLabel = new Label("Nozzle Design");
         nozzLabel.setFont(new Font(15));
         nozzLabel.setLayoutX(15);
         nozzLabel.setLayoutY(50);
-        designInput throatDiameterInput = new designInput("Throat Diameter:", "(cm)",15, 75);
+        throatDiameterInput = new designInput("Throat Diameter:", "",15, 75);
+        exitDiameterInput = new designInput("Exit Diameter:", "",15, 100);
+        exitAngleInput = new designInput("Exit Angle:", "",15, 125);
+        Label propLabel = new Label("Propellant Design");
+        propLabel.setFont(new Font(15));
+        propLabel.setLayoutX(15);
+        propLabel.setLayoutY(175);
+        densityInput = new designInput("Density","",15,200);
+        chamberTempInput = new designInput("Chamber Temp", "",15,225);
+        gammaInput = new designInput("Spec Heat Ratio","",15,250);
+        burnRateCoeffInput = new designInput("Burn Rate Coeff","",15,275);
+        burnRateExpInput = new designInput("Burn Rate Exp","",15,300);
+        molarMassInput = new designInput("Molar Mass","",15,325);
+        setInputUnits();
+
 
         // Define Run Sim button
         runSimButton = new Button("Calculate Motor Performance");
@@ -181,8 +197,17 @@ public class SRMSimApp extends Application {
         borderPane = new BorderPane();
         homePane = new Pane();
         /* TODO Add all nodes to home pane */
-        homePane.getChildren().addAll(runSimButton, topBorderLine, motorNameInput, motorNameInputLabel, nozzLabel);
+        homePane.getChildren().addAll(runSimButton, topBorderLine, motorNameInput, motorNameInputLabel, nozzLabel, propLabel);
         homePane.getChildren().addAll(throatDiameterInput.getNodeArr());
+        homePane.getChildren().addAll(exitDiameterInput.getNodeArr());
+        homePane.getChildren().addAll(exitAngleInput.getNodeArr());
+        homePane.getChildren().addAll(densityInput.getNodeArr());
+        homePane.getChildren().addAll(chamberTempInput.getNodeArr());
+        homePane.getChildren().addAll(gammaInput.getNodeArr());
+        homePane.getChildren().addAll(burnRateCoeffInput.getNodeArr());
+        homePane.getChildren().addAll(burnRateExpInput.getNodeArr());
+        homePane.getChildren().addAll(molarMassInput.getNodeArr());
+
 
         plotSelect = new ChoiceBox<>();
         plotSelect.getItems().addAll("Thrust vs Time","Chamber Pressure vs Time","Mass Flow vs Time", "Mass Ejected vs Time",
@@ -190,6 +215,27 @@ public class SRMSimApp extends Application {
                 "Regression Rate vs Chamber Pressure", "Exit Pressure vs Time", "Force Coefficient vs Time", "Free Volume vs Time", "Volume Loading vs Time");
         plotSelect.setLayoutX(0.25*paneWidth);
         plotSelect.setLayoutY(0.25*paneHeight - 35);
+    }
+
+    public void setInputUnits() {
+        if (engUnitToggle.isSelected()) {
+            throatDiameterInput.setUnits("in");
+            exitDiameterInput.setUnits("in");
+
+            densityInput.setUnits("lbm/in3");
+            chamberTempInput.setUnits("R");
+            burnRateCoeffInput.setUnits("in/s/ksi");
+            molarMassInput.setUnits("lbm/lbmol");
+        }
+        else {
+            throatDiameterInput.setUnits("cm");
+            exitDiameterInput.setUnits("cm");
+
+            densityInput.setUnits("kg/m3");
+            chamberTempInput.setUnits("K");
+            burnRateCoeffInput.setUnits("mm/s/MPa");
+            molarMassInput.setUnits("g/mol");
+        }
     }
 
     public void assesPlotSelect() {
@@ -387,6 +433,7 @@ public class SRMSimApp extends Application {
         backToMainPaneButton.setOnMouseClicked(event -> {
             simCompleted = false;
             borderPane.setCenter(homePane);
+            setInputUnits();
             changeMenuBar(false);
         });
 
@@ -405,6 +452,9 @@ public class SRMSimApp extends Application {
                 motor.convertResult(engUnitToggle.isSelected());
                 assesStaticResults();
                 borderPane.setCenter(staticResultsPane);
+            }
+            else if (borderPane.getCenter() == homePane) {
+                setInputUnits();
             }
         });
         // Import .motor file

@@ -33,4 +33,12 @@ public class designInput {
         return returnArr;
     }
 
+    public TextField getInputTF() {
+        return inputTF;
+    }
+
+    public void setUnits(String unitsStr) {
+        units.setText(unitsStr);
+    }
+
 }
