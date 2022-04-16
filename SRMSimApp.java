@@ -125,20 +125,30 @@ public class SRMSimApp extends Application {
         Label nozzLabel = new Label("Nozzle Design");
         nozzLabel.setFont(new Font(15));
         nozzLabel.setLayoutX(15);
-        nozzLabel.setLayoutY(50);
-        throatDiameterInput = new designInput("Throat Diameter:", "",15, 75);
-        exitDiameterInput = new designInput("Exit Diameter:", "",15, 100);
-        exitAngleInput = new designInput("Exit Angle:", "",15, 125);
+        nozzLabel.setLayoutY(75);
+        throatDiameterInput = new designInput("Throat Diameter:", "",nozzLabel.getLayoutX(), nozzLabel.getLayoutY() + 25);
+        exitDiameterInput = new designInput("Exit Diameter:", "",nozzLabel.getLayoutX(), throatDiameterInput.getyLoc()+25);
+        exitAngleInput = new designInput("Exit Angle:", "",nozzLabel.getLayoutX(), exitDiameterInput.getyLoc()+25);
+
         Label propLabel = new Label("Propellant Design");
         propLabel.setFont(new Font(15));
         propLabel.setLayoutX(15);
-        propLabel.setLayoutY(175);
-        densityInput = new designInput("Density","",15,200);
-        chamberTempInput = new designInput("Chamber Temp", "",15,225);
-        gammaInput = new designInput("Spec Heat Ratio","",15,250);
-        burnRateCoeffInput = new designInput("Burn Rate Coeff","",15,275);
-        burnRateExpInput = new designInput("Burn Rate Exp","",15,300);
-        molarMassInput = new designInput("Molar Mass","",15,325);
+        propLabel.setLayoutY(exitAngleInput.getyLoc() + 50);
+        densityInput = new designInput("Density","",propLabel.getLayoutX(),propLabel.getLayoutY()+25);
+        chamberTempInput = new designInput("Chamber Temp", "",propLabel.getLayoutX(),densityInput.getyLoc()+25);
+        gammaInput = new designInput("Spec Heat Ratio","",propLabel.getLayoutX(), chamberTempInput.getyLoc()+25);
+        burnRateCoeffInput = new designInput("Burn Rate Coeff","",propLabel.getLayoutX(),gammaInput.getyLoc()+25);
+        burnRateExpInput = new designInput("Burn Rate Exp","",propLabel.getLayoutX(),burnRateCoeffInput.getyLoc()+25);
+        molarMassInput = new designInput("Molar Mass","",propLabel.getLayoutX(),burnRateExpInput.getyLoc()+25);
+
+        Label grainLabel = new Label("Grain Design");
+        grainLabel.setFont(new Font(15));
+        grainLabel.setLayoutX(400);
+        grainLabel.setLayoutY(nozzLabel.getLayoutY());
+        /* TODO Add grain input system
+        *   maybe add arrayList of designInput objects for each grain design? */
+
+
         setInputUnits();
 
 
@@ -197,7 +207,7 @@ public class SRMSimApp extends Application {
         borderPane = new BorderPane();
         homePane = new Pane();
         /* TODO Add all nodes to home pane */
-        homePane.getChildren().addAll(runSimButton, topBorderLine, motorNameInput, motorNameInputLabel, nozzLabel, propLabel);
+        homePane.getChildren().addAll(runSimButton, topBorderLine, motorNameInput, motorNameInputLabel, nozzLabel, propLabel, grainLabel);
         homePane.getChildren().addAll(throatDiameterInput.getNodeArr());
         homePane.getChildren().addAll(exitDiameterInput.getNodeArr());
         homePane.getChildren().addAll(exitAngleInput.getNodeArr());

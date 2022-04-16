@@ -8,10 +8,13 @@ import java.util.ArrayList;
 public class designInput {
     private Label inputText, units;
     private TextField inputTF;
+    private double xLoc, yLoc;
 
     public designInput(String inputStr, String unitsStr, double xLoc, double yLoc) {
         double TFOffset = 120;
         double unitsOffset = TFOffset + 105;
+        this.xLoc = xLoc;
+        this.yLoc = yLoc;
         inputText = new Label(inputStr);
         inputText.setLayoutX(xLoc);
         inputText.setLayoutY(yLoc);
@@ -39,6 +42,10 @@ public class designInput {
 
     public void setUnits(String unitsStr) {
         units.setText(unitsStr);
+    }
+
+    public double getyLoc() {
+        return yLoc;
     }
 
 }
