@@ -470,13 +470,15 @@ public class SRMSimApp extends Application {
         // Import .motor file
         importMotorMI.setOnAction(event -> {
             String filename = "myMotor.motor"; // <-- add input for this step / text-field maybe?
+            filename = "This is a motor.motor"; // <-- add input for this step / text-field maybe?
             Motor motorImport = dotMotorIO.importMotor(filename);
             /* TODO Set all text fields to corresponding values */
             try {
                 propellant = motorImport.getPropellant();
                 nozzle = motorImport.getNozzle();
                 grains = motorImport.getGrainList();
-                motorNameInput.setText(motorImport.getMotorName()); // <-- Do this for every input
+                motorNameInput.setText(motorImport.getMotorName());
+                throatDiameterInput.getInputTF().setText(String.valueOf(motorImport.getNozzle().getThroatDiameter())); // <-- Do this for every input
             } catch (Exception ignored) {
             }
         });
