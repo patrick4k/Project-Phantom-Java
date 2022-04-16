@@ -470,10 +470,12 @@ public class SRMSimApp extends Application {
         // Import .motor file
         importMotorMI.setOnAction(event -> {
             String filename = "myMotor.motor"; // <-- add input for this step / text-field maybe?
-            filename = "This is a motor.motor"; // <-- add input for this step / text-field maybe?
             Motor motorImport = dotMotorIO.importMotor(filename);
-            /* TODO Set all text fields to corresponding values */
+            /* TODO Set all text fields to corresponding values
+            *   remember to convert accordingly to eng toggle */
             try {
+                engUnitToggle.setSelected(!motorImport.isSI());
+                setInputUnits();
                 propellant = motorImport.getPropellant();
                 nozzle = motorImport.getNozzle();
                 grains = motorImport.getGrainList();
