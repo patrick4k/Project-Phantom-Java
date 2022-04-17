@@ -55,6 +55,8 @@ public class SRMSimApp extends Application {
     private ArrayList<TextField> propInputs = new ArrayList<>();
     private final designInput throatDiameterInput, exitDiameterInput, exitAngleInput;
     private final designInput densityInput, chamberTempInput, gammaInput, burnRateCoeffInput, burnRateExpInput, molarMassInput;
+    private final designInput inhibitedEndsInput, grainLengthInput, outerDiameterInput;
+    private final designInput innerDiameterInput;
 
     // Buttons
     private final Button runSimButton;
@@ -76,6 +78,7 @@ public class SRMSimApp extends Application {
 
     // Addons
     private final ChoiceBox<String> plotSelect;
+    private final ChoiceBox<ArrayList<designInput>> grainChoiceBox;
     private Label plotHeaderLabel;
     private Line topBorderLine;
 
@@ -145,6 +148,20 @@ public class SRMSimApp extends Application {
         grainLabel.setFont(new Font(15));
         grainLabel.setLayoutX(400);
         grainLabel.setLayoutY(nozzLabel.getLayoutY());
+        grainChoiceBox = new ChoiceBox<>();
+        grainChoiceBox.setLayoutX(grainLabel.getLayoutX());
+        grainChoiceBox.setLayoutY(grainLabel.getLayoutY()+25);
+        inhibitedEndsInput = new designInput("Inhibited Ends","0-2",grainLabel.getLayoutX(),grainChoiceBox.getLayoutY()+25);
+        grainLengthInput = new designInput("Length","",grainLabel.getLayoutX(), inhibitedEndsInput.getyLoc()+25);
+        outerDiameterInput = new designInput("Outer Diameter","",grainLabel.getLayoutX(), grainLengthInput.getyLoc()+25);
+        ArrayList<designInput> batesInputArr = new ArrayList<>();
+        innerDiameterInput = new designInput("Inner Diameter","",grainLabel.getLayoutX(), outerDiameterInput.getyLoc()+25);
+        batesInputArr.add(inhibitedEndsInput);
+        batesInputArr.add(grainLengthInput);
+        batesInputArr.add(outerDiameterInput);
+        batesInputArr.add(innerDiameterInput);
+
+        grainChoiceBox.getItems().add(batesInputArr);
         /* TODO Add grain input system
         *   maybe add arrayList of designInput objects for each grain design? */
 
@@ -217,6 +234,10 @@ public class SRMSimApp extends Application {
         homePane.getChildren().addAll(burnRateCoeffInput.getNodeArr());
         homePane.getChildren().addAll(burnRateExpInput.getNodeArr());
         homePane.getChildren().addAll(molarMassInput.getNodeArr());
+        homePane.getChildren().add(grainChoiceBox);
+        for (designInput input:batesInputArr) {
+            homePane.getChildren().addAll(input.getNodeArr());
+        }
 
 
         plotSelect = new ChoiceBox<>();
