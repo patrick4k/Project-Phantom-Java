@@ -42,11 +42,17 @@ public class Propellant implements Serializable {
     }
 
     public double getBurnRateCoeff() {
-        return burnRateCoeff*(1E-3)*Math.pow(1E-6,this.burnRateExp); // convert to m/s/(Pa^n)
+        return burnRateCoeff;
     }
+/* TODO Fix converrsion and complete setter */
+    public void setBurnRateCoeff(double burnRateCoeff, boolean isEngUnits) {
+        if (isEngUnits) {
+            this.burnRateCoeff = burnRateCoeff*(1E-3)*Math.pow(1E-6,this.burnRateExp); // in/s/(ksi^n) to m/s/(Pa^n)
+        }
+        else {
+            this.burnRateCoeff = burnRateCoeff*(1E-3)*Math.pow(1E-6,this.burnRateExp); // mm/s/(MPa^n) to m/s/(Pa^n)
+        }
 
-    public void setBurnRateCoeff(double burnRateCoeff) {
-        this.burnRateCoeff = burnRateCoeff;
     }
 
     public double getBurnRateExp() {

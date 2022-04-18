@@ -33,7 +33,7 @@ public class test {
     public Motor initMotor() {
         // Propellant
         Propellant testPropellant = new Propellant();
-        testPropellant.setBurnRateCoeff(2.47);
+        testPropellant.setBurnRateCoeff(2.47, false);
         testPropellant.setBurnRateExp(0.49);
         testPropellant.setChamberTemp(2159);
         testPropellant.setDensity(1581.8);
@@ -81,8 +81,8 @@ public class test {
 
     public static Propellant loadPresetPropellant() {
         Propellant testPropellant = new Propellant();
-        testPropellant.setBurnRateCoeff(2.47);
         testPropellant.setBurnRateExp(0.49);
+        testPropellant.setBurnRateCoeff(2.47, false);
         testPropellant.setChamberTemp(2159);
         testPropellant.setDensity(1581.8);
         testPropellant.setGamma(1.2562);

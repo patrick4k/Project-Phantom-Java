@@ -57,6 +57,8 @@ public class SRMSimApp extends Application {
     private final designInput densityInput, chamberTempInput, gammaInput, burnRateCoeffInput, burnRateExpInput, molarMassInput;
     private final designInput inhibitedEndsInput, grainLengthInput, outerDiameterInput;
     private final designInput innerDiameterInput;
+    private final designInput slitWidthInput, slitLengthInput;
+    private final ArrayList<designInput> batesInputArr, crossInputArr;
 
     // Buttons
     private final Button runSimButton;
@@ -78,7 +80,7 @@ public class SRMSimApp extends Application {
 
     // Addons
     private final ChoiceBox<String> plotSelect;
-    private final ChoiceBox<ArrayList<designInput>> grainChoiceBox;
+    private final ChoiceBox<String> grainChoiceBox;
     private Label plotHeaderLabel;
     private Line topBorderLine;
 
@@ -129,15 +131,15 @@ public class SRMSimApp extends Application {
         nozzLabel.setFont(new Font(15));
         nozzLabel.setLayoutX(15);
         nozzLabel.setLayoutY(75);
-        throatDiameterInput = new designInput("Throat Diameter:", "",nozzLabel.getLayoutX(), nozzLabel.getLayoutY() + 25);
+        throatDiameterInput = new designInput("Throat Diameter:", "",nozzLabel.getLayoutX(), nozzLabel.getLayoutY() + 30);
         exitDiameterInput = new designInput("Exit Diameter:", "",nozzLabel.getLayoutX(), throatDiameterInput.getyLoc()+25);
-        exitAngleInput = new designInput("Exit Angle:", "",nozzLabel.getLayoutX(), exitDiameterInput.getyLoc()+25);
+        exitAngleInput = new designInput("Exit Angle:", "deg",nozzLabel.getLayoutX(), exitDiameterInput.getyLoc()+25);
 
         Label propLabel = new Label("Propellant Design");
         propLabel.setFont(new Font(15));
         propLabel.setLayoutX(15);
         propLabel.setLayoutY(exitAngleInput.getyLoc() + 50);
-        densityInput = new designInput("Density","",propLabel.getLayoutX(),propLabel.getLayoutY()+25);
+        densityInput = new designInput("Density","",propLabel.getLayoutX(),propLabel.getLayoutY()+30);
         chamberTempInput = new designInput("Chamber Temp", "",propLabel.getLayoutX(),densityInput.getyLoc()+25);
         gammaInput = new designInput("Spec Heat Ratio","",propLabel.getLayoutX(), chamberTempInput.getyLoc()+25);
         burnRateCoeffInput = new designInput("Burn Rate Coeff","",propLabel.getLayoutX(),gammaInput.getyLoc()+25);
@@ -149,19 +151,28 @@ public class SRMSimApp extends Application {
         grainLabel.setLayoutX(400);
         grainLabel.setLayoutY(nozzLabel.getLayoutY());
         grainChoiceBox = new ChoiceBox<>();
-        grainChoiceBox.setLayoutX(grainLabel.getLayoutX());
-        grainChoiceBox.setLayoutY(grainLabel.getLayoutY()+25);
-        inhibitedEndsInput = new designInput("Inhibited Ends","0-2",grainLabel.getLayoutX(),grainChoiceBox.getLayoutY()+25);
+        grainChoiceBox.getItems().addAll("Tubular","Cross");
+        grainChoiceBox.setLayoutX(grainLabel.getLayoutX() + 120);
+        grainChoiceBox.setLayoutY(grainLabel.getLayoutY());
+        grainChoiceBox.setValue("Tubular");
+        inhibitedEndsInput = new designInput("Inhibited Ends","0-2",grainLabel.getLayoutX(),grainChoiceBox.getLayoutY()+30);
         grainLengthInput = new designInput("Length","",grainLabel.getLayoutX(), inhibitedEndsInput.getyLoc()+25);
         outerDiameterInput = new designInput("Outer Diameter","",grainLabel.getLayoutX(), grainLengthInput.getyLoc()+25);
-        ArrayList<designInput> batesInputArr = new ArrayList<>();
+        batesInputArr = new ArrayList<>();
         innerDiameterInput = new designInput("Inner Diameter","",grainLabel.getLayoutX(), outerDiameterInput.getyLoc()+25);
         batesInputArr.add(inhibitedEndsInput);
         batesInputArr.add(grainLengthInput);
         batesInputArr.add(outerDiameterInput);
         batesInputArr.add(innerDiameterInput);
+        crossInputArr = new ArrayList<>();
+        slitLengthInput = new designInput("Slit Length","",grainLabel.getLayoutX(), outerDiameterInput.getyLoc()+25);
+        slitWidthInput = new designInput("Slit Length","",grainLabel.getLayoutX(), slitLengthInput.getyLoc()+25);
+        crossInputArr.add(inhibitedEndsInput);
+        crossInputArr.add(grainLengthInput);
+        crossInputArr.add(outerDiameterInput);
+        crossInputArr.add(slitLengthInput);
+        crossInputArr.add(slitWidthInput);
 
-        grainChoiceBox.getItems().add(batesInputArr);
         /* TODO Add grain input system
         *   maybe add arrayList of designInput objects for each grain design? */
 
@@ -239,7 +250,6 @@ public class SRMSimApp extends Application {
             homePane.getChildren().addAll(input.getNodeArr());
         }
 
-
         plotSelect = new ChoiceBox<>();
         plotSelect.getItems().addAll("Thrust vs Time","Chamber Pressure vs Time","Mass Flow vs Time", "Mass Ejected vs Time",
                 "Mass Flux vs Time", "Burn Area vs Time", "Burn Area vs Regression", "Kn vs Time", "Regression Rate vs Time", "Regression vs Time",
@@ -257,6 +267,12 @@ public class SRMSimApp extends Application {
             chamberTempInput.setUnits("R");
             burnRateCoeffInput.setUnits("in/s/ksi");
             molarMassInput.setUnits("lbm/lbmol");
+
+            grainLengthInput.setUnits("in");
+            outerDiameterInput.setUnits("in");
+            innerDiameterInput.setUnits("in");
+            slitWidthInput.setUnits("in");
+            slitLengthInput.setUnits("in");
         }
         else {
             throatDiameterInput.setUnits("cm");
@@ -266,6 +282,12 @@ public class SRMSimApp extends Application {
             chamberTempInput.setUnits("K");
             burnRateCoeffInput.setUnits("mm/s/MPa");
             molarMassInput.setUnits("g/mol");
+
+            grainLengthInput.setUnits("cm");
+            outerDiameterInput.setUnits("cm");
+            innerDiameterInput.setUnits("cm");
+            slitWidthInput.setUnits("cm");
+            slitLengthInput.setUnits("cm");
         }
     }
 
@@ -407,6 +429,10 @@ public class SRMSimApp extends Application {
         // Close Application
         closeMI.setOnAction(event -> {
             System.exit(0);
+        });
+
+        grainChoiceBox.setOnAction(event -> {
+
         });
 
         // Run sim with inputted motor
