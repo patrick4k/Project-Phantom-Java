@@ -59,6 +59,9 @@ public class SRMSimApp extends Application {
     private final designInput innerDiameterInput;
     private final designInput slitWidthInput, slitLengthInput;
     private final ArrayList<designInput> batesInputArr, crossInputArr;
+    private Button addGrain;
+    private Button removeGrain;
+    private ChoiceBox grainListBox;
 
     // Buttons
     private final Button runSimButton;
@@ -173,12 +176,9 @@ public class SRMSimApp extends Application {
         crossInputArr.add(slitLengthInput);
         crossInputArr.add(slitWidthInput);
 
-        /* TODO Add grain input system
-        *   maybe add arrayList of designInput objects for each grain design? */
-
+        /* TODO Add choice box for grain, option to remove or add grain */
 
         setInputUnits();
-
 
         // Define Run Sim button
         runSimButton = new Button("Calculate Motor Performance");
@@ -288,6 +288,19 @@ public class SRMSimApp extends Application {
             innerDiameterInput.setUnits("cm");
             slitWidthInput.setUnits("cm");
             slitLengthInput.setUnits("cm");
+        }
+    }
+
+    public void assesGrainSelect() {
+        homePane.getChildren().removeAll(innerDiameterInput.getNodeArr());
+        homePane.getChildren().removeAll(slitLengthInput.getNodeArr());
+        homePane.getChildren().removeAll(slitWidthInput.getNodeArr());
+        if (Objects.equals(grainChoiceBox.getValue(),"Tubular")) {
+            homePane.getChildren().addAll(innerDiameterInput.getNodeArr());
+        }
+        else if (Objects.equals(grainChoiceBox.getValue(),"Cross")) {
+            homePane.getChildren().addAll(slitWidthInput.getNodeArr());
+            homePane.getChildren().addAll(slitLengthInput.getNodeArr());
         }
     }
 
@@ -432,7 +445,7 @@ public class SRMSimApp extends Application {
         });
 
         grainChoiceBox.setOnAction(event -> {
-
+            assesGrainSelect();
         });
 
         // Run sim with inputted motor
