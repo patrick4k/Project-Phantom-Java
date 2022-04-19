@@ -1,3 +1,4 @@
+import javafx.geometry.NodeOrientation;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -34,6 +35,12 @@ public class designInput {
                 }
             } catch (Exception e) {
                 inputTF.deletePreviousChar();
+            } finally {
+                try {
+                    double num = Double.parseDouble(inputTF.getText());
+                } catch (Exception e) {
+                    inputTF.clear();
+                }
             }
         });
 

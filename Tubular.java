@@ -11,6 +11,35 @@ import java.io.Serializable;
 public class Tubular extends Grain implements Serializable {
     private double innerDiameter;
 
+    public String getDispInnerDiameter(Boolean toEngUnits) {
+        if (toEngUnits) {
+            return String.valueOf(innerDiameter*39.3701);
+        }
+        else {
+            return String.valueOf(innerDiameter*100);
+        }
+    }
+
+    public double getInnerDiameter() {
+        return innerDiameter;
+    }
+
+    public void setInnerDiameter(double innerDiameter) {
+        this.innerDiameter = innerDiameter;
+    }
+
+    @Override
+    public void runGrainConversion(Boolean fromEngUnits) {
+        super.runGrainConversion(fromEngUnits);
+        System.out.println("Tubular runGrainConversion() called");
+        if (fromEngUnits) {
+            this.innerDiameter = innerDiameter/39.3701; // in to m
+        }
+        else {
+            this.innerDiameter = innerDiameter/100; // cm to m
+        }
+    }
+
     @Override
     public void calcBurnArea(double regTotal) {
         double burnArea;
@@ -43,12 +72,6 @@ public class Tubular extends Grain implements Serializable {
         return (Math.PI/4)* this.innerDiameter*getGrainLength();
     }
 
-    public double getInnerDiameter() {
-        return innerDiameter;
-    }
 
-    public void setInnerDiameter(double innerDiameter) {
-        this.innerDiameter = innerDiameter;
-    }
 
 }

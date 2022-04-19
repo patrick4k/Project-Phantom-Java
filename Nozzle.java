@@ -13,6 +13,40 @@ public class Nozzle implements Serializable {
     double exitDiameter;
     double exitAngle;
 
+    public void runNozzleConversion(Boolean fromEngUnits) {
+        if (fromEngUnits) {
+            this.throatDiameter = throatDiameter/39.3701; // in to m
+            this.exitDiameter = exitDiameter/39.3701; // in to m
+        }
+        else {
+            this.throatDiameter = throatDiameter/100; // cm to m
+            this.exitDiameter = exitDiameter/100; // cm to m
+        }
+        this.exitAngle = exitAngle*Math.PI/180; // deg to rad
+    }
+
+    public String getDispThroatDiameter(Boolean toEngUnits) {
+        if (toEngUnits) {
+            return String.valueOf(throatDiameter*39.3701); // m to in
+        }
+        else {
+            return String.valueOf(throatDiameter*100); // m to cm
+        }
+    }
+
+    public String getDispExitDiameter(Boolean toEngUnits) {
+        if (toEngUnits) {
+            return String.valueOf(exitDiameter*39.3701); // m to in
+        }
+        else {
+            return String.valueOf(exitDiameter*100); // m to cm
+        }
+    }
+
+    public String getDispExitAngle() {
+        return String.valueOf(exitAngle*180/Math.PI);
+    }
+
     public double getThroatDiameter() {
         return throatDiameter;
     }
@@ -30,7 +64,7 @@ public class Nozzle implements Serializable {
     }
 
     public double getExitAngle() {
-        return exitAngle*Math.PI/180; // convert to rad
+        return exitAngle; // convert to rad
     }
 
     public void setExitAngle(double exitAngle) {
@@ -40,4 +74,5 @@ public class Nozzle implements Serializable {
     public double getThroatArea() {
         return (Math.PI/4)*Math.pow(this.throatDiameter,2);
     }
+
 }

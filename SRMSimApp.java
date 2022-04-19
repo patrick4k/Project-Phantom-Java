@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.util.StringConverter;
 import sun.awt.image.PNGImageDecoder;
 
 import java.io.FileInputStream;
@@ -31,6 +32,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeoutException;
 
 public class SRMSimApp extends Application {
     // Motor for Sim
@@ -47,10 +51,9 @@ public class SRMSimApp extends Application {
     private Pane plotPane, staticResultsPane;
 
     // Menu Bar
-    private final MenuItem closeMI, loadPresetPropMI,loadPresetNozMI, loadPresetCrossMI, loadPresetBatesMI, loadAllPreset,
-            exportPerformanceMI, exportMotorMI, importMotorMI, helpMI;
+    private final MenuItem closeMI, exportPerformanceMI, exportMotorMI, importMotorMI, helpMI;
     private final RadioMenuItem engUnitToggle;
-    private final Menu fileMenu, optionsMenu, loadPresetGrainSubMenu, helpMenu;
+    private final Menu fileMenu, optionsMenu, helpMenu;
     private final MenuBar mainMenu;
 
     // Motor Input
@@ -62,7 +65,7 @@ public class SRMSimApp extends Application {
     private final designInput slitWidthInput, slitLengthInput;
     private final ArrayList<designInput> batesInputArr, crossInputArr;
     private Button addGrain, removeGrain;
-    private ChoiceBox<String> grainListBox;
+    private ChoiceBox<Grain> grainListBox;
     private Label grainListLabel;
     private ImageView tubularImage, crossImage;
 
@@ -99,18 +102,15 @@ public class SRMSimApp extends Application {
 
     // Constructor
     public SRMSimApp() throws FileNotFoundException {
+        propellant = new Propellant();
+        nozzle = new Nozzle();
+        grains = new ArrayList<>();
+
         paneWidth = 750;
         paneHeight = 600;
 
         // Menu bar setup
         closeMI = new MenuItem("Close Sim");
-        loadPresetPropMI = new MenuItem("Load Preset Propellant");
-        loadPresetNozMI = new MenuItem("Load Preset Nozzle");
-        loadPresetBatesMI = new MenuItem("BATES Config");
-        loadPresetCrossMI = new MenuItem("Cross Config");
-        loadAllPreset = new MenuItem("Load Random Preset Motor");
-        loadPresetGrainSubMenu = new Menu("Load Preset Grain");
-        loadPresetGrainSubMenu.getItems().addAll(loadPresetCrossMI, loadPresetBatesMI);
         exportPerformanceMI = new MenuItem("Export .CSV");
         exportMotorMI = new MenuItem("Export .motor");
         importMotorMI = new MenuItem("Import .motor");
@@ -119,7 +119,7 @@ public class SRMSimApp extends Application {
         fileMenu = new Menu("File");
         fileMenu.getItems().addAll(importMotorMI, closeMI);
         optionsMenu = new Menu("Options");
-        optionsMenu.getItems().addAll(engUnitToggle, loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
+        optionsMenu.getItems().add(engUnitToggle);
         helpMenu = new Menu("Help");
         helpMenu.getItems().add(helpMI);
         mainMenu = new MenuBar(fileMenu, optionsMenu, helpMenu);
@@ -162,6 +162,26 @@ public class SRMSimApp extends Application {
         grainChoiceBox.setLayoutY(grainLabel.getLayoutY());
         grainChoiceBox.setValue("Tubular");
         inhibitedEndsInput = new designInput("Inhibited Ends","0-2",grainLabel.getLayoutX(),grainChoiceBox.getLayoutY()+30);
+        inhibitedEndsInput.getInputTF().setOnKeyReleased(event -> {
+            try {
+                int num = Integer.parseInt(inhibitedEndsInput.getInputTF().getText());
+                if ((num < 0) || (num > 2)) {
+                    inhibitedEndsInput.getInputTF().deletePreviousChar();
+                }
+            } catch (Exception e) {
+                inhibitedEndsInput.getInputTF().deletePreviousChar();
+            } finally {
+                try {
+                    int num = Integer.parseInt(inhibitedEndsInput.getInputTF().getText());
+                    if ((num < 0) || (num > 2)) {
+                        inhibitedEndsInput.getInputTF().clear();
+                    }
+                } catch (Exception e) {
+                    inhibitedEndsInput.getInputTF().clear();
+                }
+            }
+
+        });
         grainLengthInput = new designInput("Length","",grainLabel.getLayoutX(), inhibitedEndsInput.getyLoc()+25);
         outerDiameterInput = new designInput("Outer Diameter","",grainLabel.getLayoutX(), grainLengthInput.getyLoc()+25);
         batesInputArr = new ArrayList<>();
@@ -172,13 +192,12 @@ public class SRMSimApp extends Application {
         batesInputArr.add(innerDiameterInput);
         crossInputArr = new ArrayList<>();
         slitLengthInput = new designInput("Slit Length","",grainLabel.getLayoutX(), outerDiameterInput.getyLoc()+25);
-        slitWidthInput = new designInput("Slit Length","",grainLabel.getLayoutX(), slitLengthInput.getyLoc()+25);
+        slitWidthInput = new designInput("Slit Width","",grainLabel.getLayoutX(), slitLengthInput.getyLoc()+25);
         crossInputArr.add(inhibitedEndsInput);
         crossInputArr.add(grainLengthInput);
         crossInputArr.add(outerDiameterInput);
         crossInputArr.add(slitLengthInput);
         crossInputArr.add(slitWidthInput);
-
 
         grainListLabel = new Label("Current Grain Configuration");
         grainListLabel.setLayoutX(grainLabel.getLayoutX());
@@ -189,6 +208,22 @@ public class SRMSimApp extends Application {
         grainListBox.setLayoutY(grainListLabel.getLayoutY()+25);
         grainListBox.setMaxWidth(100);
         grainListBox.setMinWidth(100);
+        grainListBox.setConverter(new StringConverter<Grain>() {
+            @Override
+            public String toString(Grain grain) {
+                return grain.getGrainName();
+            }
+            @Override
+            public Grain fromString(String grainName) {
+                Grain returnGrain = null;
+                for (Grain grain:grains) {
+                    if (Objects.equals(grainName,grain.getGrainName())) {
+                        returnGrain = grain;
+                    }
+                }
+                return returnGrain;
+            }
+        });
         Image tubularImageFile = new Image(new FileInputStream("tubular.jpeg"));
         tubularImage = new ImageView(tubularImageFile);
         formatImage(tubularImage);
@@ -244,6 +279,8 @@ public class SRMSimApp extends Application {
         helpStage.setAlwaysOnTop(true);
 
         // Exception setup
+        exceptionLabel = new Label();
+        exceptionLabel.setFont(new Font(14));
         exceptionBorder = new BorderPane();
         exceptionStage = new Stage();
         exceptionPane = new Pane();
@@ -343,8 +380,8 @@ public class SRMSimApp extends Application {
             homePane.getChildren().add(tubularImage);
         }
         else if (Objects.equals(grainChoiceBox.getValue(),"Cross")) {
-            homePane.getChildren().addAll(slitWidthInput.getNodeArr());
             homePane.getChildren().addAll(slitLengthInput.getNodeArr());
+            homePane.getChildren().addAll(slitWidthInput.getNodeArr());
             homePane.getChildren().add(crossImage);
         }
     }
@@ -352,21 +389,47 @@ public class SRMSimApp extends Application {
     public void addGrainToList() {
         if (Objects.equals(grainChoiceBox.getValue(),"Tubular")) {
             Tubular newTubular = new Tubular();
-            newTubular.setInhibitedEnds(inhibitedEndsInput.getValue());
-            newTubular.setOuterDiameter(outerDiameterInput.getValue());
-            newTubular.setGrainLength(grainLengthInput.getValue());
-            newTubular.setInnerDiameter(innerDiameterInput.getValue());
-            grains.add(newTubular);
-            grainListBox.getItems().add("BATES " + grainCounter);
+            try {
+                newTubular.setInhibitedEnds(inhibitedEndsInput.getValue());
+                newTubular.setOuterDiameter(outerDiameterInput.getValue());
+                newTubular.setGrainLength(grainLengthInput.getValue());
+                newTubular.setInnerDiameter(innerDiameterInput.getValue());
+                newTubular.runGrainConversion(engUnitToggle.isSelected());
+                if (outerDiameterInput.getValue() <= innerDiameterInput.getValue()) {
+                    showExceptionStage("Invalid Tubular Geometry\n\nInner diameter must be smaller than outer diameter");
+                }
+                else {
+                    grainCounter++;
+                    newTubular.setGrainName("Grain " + grainCounter);
+                    grainListBox.getItems().add(newTubular);
+                    grainListBox.setValue(newTubular);
+                }
+            } catch (Exception e) {
+                showExceptionStage("Invalid Tubular Geometry");
+            }
+
         }
         else if (Objects.equals(grainChoiceBox.getValue(),"Cross")) {
             Cross newCross = new Cross();
-            newCross.setInhibitedEnds(inhibitedEndsInput.getValue());
-            newCross.setOuterDiameter(outerDiameterInput.getValue());
-            newCross.setGrainLength(grainLengthInput.getValue());
-            newCross.setWidth(slitWidthInput.getValue());
-            newCross.setLength(slitLengthInput.getValue());
-            grains.add(newCross);
+            try{
+                newCross.setInhibitedEnds(inhibitedEndsInput.getValue());
+                newCross.setOuterDiameter(outerDiameterInput.getValue());
+                newCross.setGrainLength(grainLengthInput.getValue());
+                newCross.setWidth(slitWidthInput.getValue());
+                newCross.setLength(slitLengthInput.getValue());
+                newCross.runGrainConversion(engUnitToggle.isSelected());
+                if ((slitLengthInput.getValue() >= outerDiameterInput.getValue()/2) || (slitWidthInput.getValue() >= outerDiameterInput.getValue())) {
+                    showExceptionStage("Invalid Cross Geometry\n\nSlits cannot be exceed bounds of motor");
+                }
+                else {
+                    grainCounter++;
+                    newCross.setGrainName("Grain " + grainCounter);
+                    grainListBox.getItems().add(newCross);
+                    grainListBox.setValue(newCross);
+                }
+            } catch (Exception e) {
+                showExceptionStage("Invalid Cross Geometry");
+            }
         }
     }
 
@@ -494,13 +557,95 @@ public class SRMSimApp extends Application {
         if (fromHomePane) {
             fileMenu.getItems().clear();
             fileMenu.getItems().addAll(exportPerformanceMI, exportMotorMI, closeMI);
-            optionsMenu.getItems().removeAll(loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
         }
         else {
             fileMenu.getItems().clear();
             fileMenu.getItems().addAll(importMotorMI, closeMI);
-            optionsMenu.getItems().addAll(loadPresetPropMI, loadPresetNozMI, loadPresetGrainSubMenu, loadAllPreset);
         }
+    }
+
+    public void showExceptionStage(String message) {
+        exceptionLabel.setText(message);
+        exceptionStage.close();
+        exceptionPane.getChildren().clear();
+        exceptionPane.getChildren().add(exceptionLabel);
+        exceptionStage.setAlwaysOnTop(true);
+        exceptionStage.show();
+    }
+
+    public void showSelectedGrain() {
+        try {
+            inhibitedEndsInput.getInputTF().setText(grainListBox.getValue().getDispInhibitedEnds());
+            grainLengthInput.getInputTF().setText(grainListBox.getValue().getDispGrainLength(engUnitToggle.isSelected()));
+            outerDiameterInput.getInputTF().setText(grainListBox.getValue().getDispOuterDiameter(engUnitToggle.isSelected()));
+            if (grainListBox.getValue() instanceof Tubular) {
+                grainChoiceBox.setValue("Tubular");
+                assesGrainSelect();
+                innerDiameterInput.getInputTF().setText(((Tubular) grainListBox.getValue()).getDispInnerDiameter(engUnitToggle.isSelected()));
+            }
+            else if (grainListBox.getValue() instanceof Cross) {
+                grainChoiceBox.setValue("Cross");
+                assesGrainSelect();
+                slitLengthInput.getInputTF().setText(((Cross) grainListBox.getValue()).getDispSlitLength(engUnitToggle.isSelected()));
+                slitWidthInput.getInputTF().setText(((Cross) grainListBox.getValue()).getDispSlitWidth(engUnitToggle.isSelected()));
+            }
+        } catch (NullPointerException ignored) {
+        }
+    }
+
+
+    public void setImportedNozzle(Nozzle nozzle) {
+        throatDiameterInput.getInputTF().setText(nozzle.getDispThroatDiameter(engUnitToggle.isSelected()));
+        exitDiameterInput.getInputTF().setText(nozzle.getDispExitDiameter(engUnitToggle.isSelected()));
+        exitAngleInput.getInputTF().setText(nozzle.getDispExitAngle());
+    }
+
+    public void setImportedPropellant(Propellant propellant) {
+        densityInput.getInputTF().setText(propellant.getDispDensity(engUnitToggle.isSelected()));
+        chamberTempInput.getInputTF().setText(propellant.getDispChamberTemp(engUnitToggle.isSelected()));
+        gammaInput.getInputTF().setText(propellant.getDispGamma());
+        burnRateCoeffInput.getInputTF().setText(propellant.getDispBurnRateCoeff(engUnitToggle.isSelected()));
+        burnRateExpInput.getInputTF().setText(propellant.getDispBurnRateExp());
+        molarMassInput.getInputTF().setText(propellant.getDispMolarMass());
+    }
+
+    public void setImportedGrains(ArrayList<Grain> grains) {
+        grainListBox.getItems().clear();
+        grainListBox.getItems().addAll(grains);
+        grainListBox.setValue(grainListBox.getItems().get(0));
+        showSelectedGrain();
+    }
+
+    public void initializeNozzle() {
+        nozzle = new Nozzle();
+        try {
+            nozzle.setThroatDiameter(throatDiameterInput.getValue());
+            nozzle.setExitDiameter(exitDiameterInput.getValue());
+            nozzle.setExitAngle(exitAngleInput.getValue());
+            nozzle.runNozzleConversion(engUnitToggle.isSelected());
+        } catch (Exception e) {
+            showExceptionStage("Invalid Nozzle Geometry");
+        }
+    }
+
+    public void initializePropellant() {
+        propellant = new Propellant();
+        try {
+            propellant.setDensity(densityInput.getValue());
+            propellant.setGamma(gammaInput.getValue());
+            propellant.setMolarMass(molarMassInput.getValue());
+            propellant.setChamberTemp(chamberTempInput.getValue());
+            propellant.setBurnRateExp(burnRateExpInput.getValue());
+            propellant.setBurnRateCoeff(burnRateCoeffInput.getValue());
+            propellant.runPropConversion(engUnitToggle.isSelected());
+        } catch (Exception e) {
+            showExceptionStage("Invalid Nozzle Geometry");
+        }
+    }
+
+    public void initializeGrains() {
+        grains = new ArrayList<>();
+        grains.addAll(grainListBox.getItems());
     }
 
     public void lambdaFunctions() {
@@ -515,16 +660,20 @@ public class SRMSimApp extends Application {
 
         // Run sim with inputted motor
         runSimButton.setOnMouseClicked(event -> {
-            /*TODO asses input text fields and assign to new Prop Nozz and grainList */
-            this.motor = new Motor(propellant,nozzle,grains);
-            if (!motorNameInput.getText().isEmpty()) {
-                this.motor.setMotorName(motorNameInput.getText());
-            }
-            else {
-                this.motor.setMotorName("myMotor");
-            }
             try {
+                initializeNozzle();
+                initializePropellant();
+                initializeGrains();
+                this.motor = new Motor(propellant,nozzle,grains);
+
+                if (!motorNameInput.getText().isEmpty()) {
+                    this.motor.setMotorName(motorNameInput.getText());
+                }
+                else {
+                    this.motor.setMotorName("myMotor");
+                }
                 this.motor.runSim();
+
                 changeMenuBar(true);
                 simCompleted = true;
                 exceptionStage.close();
@@ -534,6 +683,7 @@ public class SRMSimApp extends Application {
                 }
                 updatePlotPane(motor.getTimeList(),motor.getThrustList(), "Thrust vs Time", motor.getTimeUnits(), motor.getThrustUnits());
             } catch (Exception e) {
+                e.printStackTrace();
                 StringBuilder errorStringBuilder = new StringBuilder("Sim could not run with current config\n\n");
                 if (Objects.isNull(propellant)) {
                     errorStringBuilder.append("Propellant Necessary for Simulation\n\n");
@@ -544,20 +694,22 @@ public class SRMSimApp extends Application {
                 if (Objects.isNull(grains)) {
                     errorStringBuilder.append("Grains Necessary for Simulation\n\n");
                 }
-                // Exception Initialize
-                exceptionLabel = new Label(errorStringBuilder.toString());
-                exceptionLabel.setFont(new Font(14));
-                exceptionStage.close();
-                exceptionPane.getChildren().clear();
-                exceptionPane.getChildren().add(exceptionLabel);
-                exceptionStage.setAlwaysOnTop(true);
-                exceptionStage.show();
+                showExceptionStage(errorStringBuilder.toString());
             }
         });
 
         // Add grain to grain list
         addGrain.setOnAction(event -> {
             addGrainToList();
+        });
+
+        removeGrain.setOnAction(event -> {
+            grains.remove(grainListBox.getValue());
+            grainListBox.getItems().remove(grainListBox.getValue());
+        });
+
+        grainListBox.setOnAction(event -> {
+            showSelectedGrain();
         });
 
         // Export Results as CSV file
@@ -584,6 +736,7 @@ public class SRMSimApp extends Application {
 
         // Change units post simulation
         engUnitToggle.setOnAction(event -> {
+
             if ((simCompleted) && (borderPane.getCenter() == plotPane)) {
                 motor.convertResult(engUnitToggle.isSelected());
                 assesPlotSelect();
@@ -599,18 +752,17 @@ public class SRMSimApp extends Application {
         });
         // Import .motor file
         importMotorMI.setOnAction(event -> {
-            String filename = "myMotor.motor"; // <-- add input for this step / text-field maybe?
+            String filename = "defaultTestMotorEngUnits.motor";
             Motor motorImport = dotMotorIO.importMotor(filename);
-            /* TODO Set all text fields to corresponding values
-            *   remember to convert accordingly to eng toggle */
             try {
                 engUnitToggle.setSelected(!motorImport.isSI());
                 setInputUnits();
-                propellant = motorImport.getPropellant();
-                nozzle = motorImport.getNozzle();
-                grains = motorImport.getGrainList();
+                setImportedNozzle(motorImport.getNozzle());
+                setImportedPropellant(motorImport.getPropellant());
+                setImportedGrains(motorImport.getGrainList());
+
                 motorNameInput.setText(motorImport.getMotorName());
-                throatDiameterInput.getInputTF().setText(String.valueOf(motorImport.getNozzle().getThroatDiameter())); // <-- Do this for every input
+
             } catch (Exception ignored) {
             }
         });
@@ -629,35 +781,6 @@ public class SRMSimApp extends Application {
             assesPlotSelect();
             borderPane.setCenter(plotPane);
         });
-
-        // Load Preset Propellant
-        loadPresetPropMI.setOnAction(event -> {
-            this.propellant = test.loadPresetPropellant();
-        });
-        // Load Preset Nozzle
-        loadPresetNozMI.setOnAction(event -> {
-            this.nozzle = test.loadPresetNozzle();
-        });
-        // Load Preset for cross grain
-        loadPresetCrossMI.setOnAction(event -> {
-            this.grains = test.loadPresetCross();
-        });
-        // Load Preset for BATES grain
-        loadPresetBatesMI.setOnAction((event -> {
-            this.grains = test.loadPresetBates();
-        }));
-
-        // Load All Presets
-        loadAllPreset.setOnAction((event -> {
-            this.propellant = test.loadPresetPropellant();
-            this.nozzle = test.loadPresetNozzle();
-            if (Math.random() > 0.5) {
-                this.grains = test.loadPresetBates();
-            }
-            else {
-                this.grains = test.loadPresetCross();
-            }
-        }));
 
         // Help menu item
         helpMI.setOnAction(event -> {

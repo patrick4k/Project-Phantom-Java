@@ -33,7 +33,7 @@ public class test {
     public Motor initMotor() {
         // Propellant
         Propellant testPropellant = new Propellant();
-        testPropellant.setBurnRateCoeff(2.47, false);
+        testPropellant.setBurnRateCoeff(2.47);
         testPropellant.setBurnRateExp(0.49);
         testPropellant.setChamberTemp(2159);
         testPropellant.setDensity(1581.8);
@@ -43,14 +43,14 @@ public class test {
         // Nozzle
         Nozzle testNozzle = new Nozzle();
         testNozzle.setExitAngle(15);
-        testNozzle.setExitDiameter(0.0254);
-        testNozzle.setThroatDiameter(0.009525);
+        testNozzle.setExitDiameter(.0254);
+        testNozzle.setThroatDiameter(.009525);
 
         // Grain (Tubular)
         Tubular testGrain1 = new Tubular();
         testGrain1.setGrainLength(0.12065);
-        testGrain1.setInnerDiameter(0.015875);
-        testGrain1.setOuterDiameter(0.04445);
+        testGrain1.setInnerDiameter(.015875);
+        testGrain1.setOuterDiameter(.04445);
         testGrain1.setInhibitedEnds(2);
 
         // Grain (Cross)
@@ -63,10 +63,10 @@ public class test {
 
         // Add grains into grain list (2 identical grains in this test motor)
         ArrayList<Grain> testGrainList = new ArrayList<Grain>();
-        testGrainList.add(testGrain2);
-        testGrainList.add(testGrain2);
-        testGrainList.add(testGrain2);
-        testGrainList.add(testGrain2);
+        testGrainList.add(testGrain1);
+        testGrainList.add(testGrain1);
+        testGrainList.add(testGrain1);
+        testGrainList.add(testGrain1);
 
         Motor testMotor = new Motor(testPropellant, testNozzle, testGrainList);
         //testMotor.setPropellant(testPropellant);
@@ -75,14 +75,14 @@ public class test {
         //testMotor.setMotorVolume((Math.PI/4)*(0.04445)*(4*0.12065));
         testMotor.setAtmPressure(101325);
         testMotor.setDt(1E-3);
-        testMotor.setMotorName("testMotor_CROSS");
+        testMotor.setMotorName("myTestMotor");
         return testMotor;
     }
 
     public static Propellant loadPresetPropellant() {
         Propellant testPropellant = new Propellant();
         testPropellant.setBurnRateExp(0.49);
-        testPropellant.setBurnRateCoeff(2.47, false);
+        testPropellant.setBurnRateCoeff(2.47);
         testPropellant.setChamberTemp(2159);
         testPropellant.setDensity(1581.8);
         testPropellant.setGamma(1.2562);
