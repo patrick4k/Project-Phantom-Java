@@ -4,6 +4,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class designInput {
     private Label inputText, units;
@@ -23,6 +24,19 @@ public class designInput {
         inputTF.setMaxSize(100,10);
         inputTF.setLayoutX(xLoc + TFOffset);
         inputTF.setLayoutY(yLoc);
+
+        // Force text input to be double
+        inputTF.setOnKeyReleased(event -> {
+            try {
+                double num = Double.parseDouble(inputTF.getText());
+                if (Objects.equals(inputTF.getText(inputTF.getText().length() - 1, inputTF.getText().length()), " ")) {
+                    inputTF.deletePreviousChar();
+                }
+            } catch (Exception e) {
+                inputTF.deletePreviousChar();
+            }
+        });
+
         units = new Label(unitsStr);
         units.setLayoutX(xLoc + unitsOffset);
         units.setLayoutY(yLoc);
@@ -46,6 +60,10 @@ public class designInput {
 
     public double getyLoc() {
         return yLoc;
+    }
+
+    public double getValue() {
+        return Double.parseDouble(inputTF.getText());
     }
 
 }

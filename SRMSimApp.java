@@ -12,8 +12,11 @@ In SRMSimApp.java:
  SRMSimApp.java creates new panes and commits these panes to the borderPane using other classes
  */
 import javafx.application.Application;
+import javafx.geometry.NodeOrientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -23,6 +26,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import sun.awt.image.PNGImageDecoder;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -32,6 +37,7 @@ public class SRMSimApp extends Application {
     private Propellant propellant;
     private Nozzle nozzle;
     private ArrayList<Grain> grains;
+    private int grainCounter;
     private Motor motor;
     private boolean simCompleted = false;
 
@@ -48,20 +54,17 @@ public class SRMSimApp extends Application {
     private final MenuBar mainMenu;
 
     // Motor Input
-    private TextField motorNameInput;
-    private ArrayList<Label> nozzLabels = new ArrayList<>();
-    private ArrayList<Label> propLabels = new ArrayList<>();
-    private ArrayList<TextField> nozzInputs = new ArrayList<>();
-    private ArrayList<TextField> propInputs = new ArrayList<>();
+    private final TextField motorNameInput;
     private final designInput throatDiameterInput, exitDiameterInput, exitAngleInput;
     private final designInput densityInput, chamberTempInput, gammaInput, burnRateCoeffInput, burnRateExpInput, molarMassInput;
     private final designInput inhibitedEndsInput, grainLengthInput, outerDiameterInput;
     private final designInput innerDiameterInput;
     private final designInput slitWidthInput, slitLengthInput;
     private final ArrayList<designInput> batesInputArr, crossInputArr;
-    private Button addGrain;
-    private Button removeGrain;
-    private ChoiceBox grainListBox;
+    private Button addGrain, removeGrain;
+    private ChoiceBox<String> grainListBox;
+    private Label grainListLabel;
+    private ImageView tubularImage, crossImage;
 
     // Buttons
     private final Button runSimButton;
@@ -95,7 +98,7 @@ public class SRMSimApp extends Application {
     String motorName;
 
     // Constructor
-    public SRMSimApp() {
+    public SRMSimApp() throws FileNotFoundException {
         paneWidth = 750;
         paneHeight = 600;
 
@@ -134,9 +137,9 @@ public class SRMSimApp extends Application {
         nozzLabel.setFont(new Font(15));
         nozzLabel.setLayoutX(15);
         nozzLabel.setLayoutY(75);
-        throatDiameterInput = new designInput("Throat Diameter:", "",nozzLabel.getLayoutX(), nozzLabel.getLayoutY() + 30);
-        exitDiameterInput = new designInput("Exit Diameter:", "",nozzLabel.getLayoutX(), throatDiameterInput.getyLoc()+25);
-        exitAngleInput = new designInput("Exit Angle:", "deg",nozzLabel.getLayoutX(), exitDiameterInput.getyLoc()+25);
+        throatDiameterInput = new designInput("Throat Diameter", "",nozzLabel.getLayoutX(), nozzLabel.getLayoutY() + 30);
+        exitDiameterInput = new designInput("Exit Diameter", "",nozzLabel.getLayoutX(), throatDiameterInput.getyLoc()+25);
+        exitAngleInput = new designInput("Exit Angle", "deg",nozzLabel.getLayoutX(), exitDiameterInput.getyLoc()+25);
 
         Label propLabel = new Label("Propellant Design");
         propLabel.setFont(new Font(15));
@@ -176,7 +179,38 @@ public class SRMSimApp extends Application {
         crossInputArr.add(slitLengthInput);
         crossInputArr.add(slitWidthInput);
 
-        /* TODO Add choice box for grain, option to remove or add grain */
+
+        grainListLabel = new Label("Current Grain Configuration");
+        grainListLabel.setLayoutX(grainLabel.getLayoutX());
+        grainListLabel.setLayoutY(slitWidthInput.getyLoc()+50);
+        grainListLabel.setFont(new Font(15));
+        grainListBox = new ChoiceBox<>();
+        grainListBox.setLayoutX(grainLabel.getLayoutX());
+        grainListBox.setLayoutY(grainListLabel.getLayoutY()+25);
+        grainListBox.setMaxWidth(100);
+        grainListBox.setMinWidth(100);
+        Image tubularImageFile = new Image(new FileInputStream("tubular.jpeg"));
+        tubularImage = new ImageView(tubularImageFile);
+        formatImage(tubularImage);
+        Image crossImageFile = new Image(new FileInputStream("cross.jpeg"));
+        crossImage = new ImageView(crossImageFile);
+        formatImage(crossImage);
+        Line[] imageBorder = new Line[4];
+        imageBorder[0] = new Line(tubularImage.getLayoutX(),tubularImage.getLayoutY(),
+                tubularImage.getLayoutX()+tubularImage.getFitWidth(),tubularImage.getLayoutY());
+        imageBorder[1] = new Line(tubularImage.getLayoutX(),tubularImage.getLayoutY(),
+                tubularImage.getLayoutX(),tubularImage.getLayoutY()+tubularImage.getFitHeight());
+        imageBorder[2] = new Line(tubularImage.getLayoutX()+tubularImage.getFitWidth(),
+                tubularImage.getLayoutY(),tubularImage.getLayoutX()+tubularImage.getFitWidth(),tubularImage.getLayoutY()+tubularImage.getFitHeight());
+        imageBorder[3] = new Line(tubularImage.getLayoutX(),tubularImage.getLayoutY()+tubularImage.getFitHeight(),
+                tubularImage.getLayoutX()+tubularImage.getFitWidth(),tubularImage.getLayoutY()+tubularImage.getFitHeight());
+
+        addGrain = new Button("Add");
+        addGrain.setLayoutX(grainChoiceBox.getLayoutX()+90);
+        addGrain.setLayoutY(grainChoiceBox.getLayoutY());
+        removeGrain = new Button("Remove");
+        removeGrain.setLayoutX(grainListBox.getLayoutX()+120);
+        removeGrain.setLayoutY(grainListBox.getLayoutY());
 
         setInputUnits();
 
@@ -234,7 +268,6 @@ public class SRMSimApp extends Application {
         topBorderLine = new Line(0,45,paneWidth,45);
         borderPane = new BorderPane();
         homePane = new Pane();
-        /* TODO Add all nodes to home pane */
         homePane.getChildren().addAll(runSimButton, topBorderLine, motorNameInput, motorNameInputLabel, nozzLabel, propLabel, grainLabel);
         homePane.getChildren().addAll(throatDiameterInput.getNodeArr());
         homePane.getChildren().addAll(exitDiameterInput.getNodeArr());
@@ -245,7 +278,8 @@ public class SRMSimApp extends Application {
         homePane.getChildren().addAll(burnRateCoeffInput.getNodeArr());
         homePane.getChildren().addAll(burnRateExpInput.getNodeArr());
         homePane.getChildren().addAll(molarMassInput.getNodeArr());
-        homePane.getChildren().add(grainChoiceBox);
+        homePane.getChildren().addAll(grainChoiceBox,addGrain,removeGrain, grainListBox, grainListLabel, tubularImage);
+        homePane.getChildren().addAll(imageBorder);
         for (designInput input:batesInputArr) {
             homePane.getChildren().addAll(input.getNodeArr());
         }
@@ -256,6 +290,14 @@ public class SRMSimApp extends Application {
                 "Regression Rate vs Chamber Pressure", "Exit Pressure vs Time", "Force Coefficient vs Time", "Free Volume vs Time", "Volume Loading vs Time");
         plotSelect.setLayoutX(0.25*paneWidth);
         plotSelect.setLayoutY(0.25*paneHeight - 35);
+    }
+
+    public void formatImage(ImageView image) {
+        image.setFitHeight(100);
+        image.setFitWidth(100);
+        image.setPreserveRatio(true);
+        image.setLayoutX(grainListBox.getLayoutX() + 210);
+        image.setLayoutY(grainListLabel.getLayoutY());
     }
 
     public void setInputUnits() {
@@ -295,12 +337,36 @@ public class SRMSimApp extends Application {
         homePane.getChildren().removeAll(innerDiameterInput.getNodeArr());
         homePane.getChildren().removeAll(slitLengthInput.getNodeArr());
         homePane.getChildren().removeAll(slitWidthInput.getNodeArr());
+        homePane.getChildren().removeAll(tubularImage,crossImage);
         if (Objects.equals(grainChoiceBox.getValue(),"Tubular")) {
             homePane.getChildren().addAll(innerDiameterInput.getNodeArr());
+            homePane.getChildren().add(tubularImage);
         }
         else if (Objects.equals(grainChoiceBox.getValue(),"Cross")) {
             homePane.getChildren().addAll(slitWidthInput.getNodeArr());
             homePane.getChildren().addAll(slitLengthInput.getNodeArr());
+            homePane.getChildren().add(crossImage);
+        }
+    }
+
+    public void addGrainToList() {
+        if (Objects.equals(grainChoiceBox.getValue(),"Tubular")) {
+            Tubular newTubular = new Tubular();
+            newTubular.setInhibitedEnds(inhibitedEndsInput.getValue());
+            newTubular.setOuterDiameter(outerDiameterInput.getValue());
+            newTubular.setGrainLength(grainLengthInput.getValue());
+            newTubular.setInnerDiameter(innerDiameterInput.getValue());
+            grains.add(newTubular);
+            grainListBox.getItems().add("BATES " + grainCounter);
+        }
+        else if (Objects.equals(grainChoiceBox.getValue(),"Cross")) {
+            Cross newCross = new Cross();
+            newCross.setInhibitedEnds(inhibitedEndsInput.getValue());
+            newCross.setOuterDiameter(outerDiameterInput.getValue());
+            newCross.setGrainLength(grainLengthInput.getValue());
+            newCross.setWidth(slitWidthInput.getValue());
+            newCross.setLength(slitLengthInput.getValue());
+            grains.add(newCross);
         }
     }
 
@@ -438,7 +504,6 @@ public class SRMSimApp extends Application {
     }
 
     public void lambdaFunctions() {
-        /* TODO Add lambda for import export of .motor files */
         // Close Application
         closeMI.setOnAction(event -> {
             System.exit(0);
@@ -488,6 +553,11 @@ public class SRMSimApp extends Application {
                 exceptionStage.setAlwaysOnTop(true);
                 exceptionStage.show();
             }
+        });
+
+        // Add grain to grain list
+        addGrain.setOnAction(event -> {
+            addGrainToList();
         });
 
         // Export Results as CSV file
