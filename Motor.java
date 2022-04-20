@@ -1,9 +1,56 @@
 /*
-Name: Patrick Kennedy
-Date Modified: 4/8/22
+Name: Patrick kennedy
+Date: 4/20/22
 
-Where the simulation occurs, the motor class puts other classes together to form a motor.
-Motor utilizes equations derived by Richard Nakka
+Motor
+    - This class contains all calculations for the internal ballistics of a solid rocket motor
+
+Methods:
+Motor(Propellant, Nozzle, ArrayList<Grain>): Constructor
+    - Sets propellant, nozzle and grain configuration
+calcRegRate(): void
+    - Updates regression rate per iteration
+calcRegStep(): void
+    - Updates regression step per iteration
+calcRegTotal(): void
+    - Updates regression total per iteration
+calcBurnArea(): void
+    - Updates burn area per iteration
+calcMassFlow(): void
+    - Updates mass flow per iteration
+calcMassFlux(): void
+    - Updates mass flux per iteration
+calcMassEjected(): void
+    - Updates mass ejected per iteration
+calcKn(): void
+    - Updates kn per iteration
+calcFreeVolume(): void
+    - Updates free volume per iteration
+calcChamberPressure(): void
+    - Updates chamber pressure per iteration
+exitPressureFunc(double): double
+    - Analyzes exit pressure function at given argument
+calcExitPressure(): void
+    - Uses bisection method to update approximate exit pressure
+calcForceCoefficient(): void
+    - Updates force coefficient per iteration
+calcThrust(): void
+    - Updates thrust per iteration
+calcVolumeLoading(): void
+    - Calculates volume loading over total time of burn
+runSim(): void
+    - Runs simulation of internal ballistics in optimized order
+    - Updates all array list to store collected data
+evaluateMotor(): void
+    - Evaluates static properties of motor post simulation
+average(ArrayList<Double>): double
+    - Returns average value of an array list
+popList(): void
+    - Removes last item of list for arraylist that completed one extra iteration
+shiftSIUnits: void
+    - Iterates throughout each list shifting units from base SI to display SI
+convertResults(boolean): void
+    - Converts results from SI to english (true) or english to SI (false)
  */
 
 import java.io.Serializable;
@@ -268,15 +315,6 @@ public class Motor implements Serializable {
         this.cStar = this.getcStar();
         this.initalKn = this.getKnList().get(0);
         this.maxKn = Collections.max(this.getKnList());
-    }
-
-    public void printBurnAreaAtRegTotal(double regTotal) {
-        double burnArea = 0;
-        for (Grain grain: this.grainList) {
-            grain.calcBurnArea(regTotal);
-            burnArea += grain.getBurnArea();
-        }
-        System.out.println("Burn Area @ regTotal = " + regTotal + ": " + burnArea);
     }
 
     public double average(ArrayList<Double> ArrList) {

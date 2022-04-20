@@ -1,10 +1,16 @@
 /*
-Static Results class
-By Patrick Kennedy
-Date Modified: 4/8/22
+Name: Patrick Kennedy
+Date: 4/20/22
 
-Static Results imports a motor post simulation and creates a pane of labels that display static properties calculated
-in the motor class. An ArrayList of labels is used for easier placement manipulation and later modification
+staticResults
+    - This class creates a pane of static results from a motor
+
+Methods:
+staticResults(Motor, double, double): Constructor
+    - The constructor takes in motor import, pane height, and pane width parameters and assembles the static results pane
+roundToSigFigs(double, int): String
+    - This method returns a string form of a double after that double is rounded to a specific number of significant digits
+    - This method uses math to chop off a majority of the significant digits, but requires Decimal format to compensate for java math errors
  */
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -48,6 +54,7 @@ public class staticResults {
         staticResultLabels.add(new Label("C* = " + roundToSigFigs(motor.getcStar(), 6) + " " + motor.getVelocityUnits()));
         staticResultLabels.add(new Label("Initial Kn = " + roundToSigFigs(motor.getInitalKn(), 6)));
         staticResultLabels.add(new Label("Max Kn = " + roundToSigFigs(motor.getMaxKn(), 6)));
+        // TODO add average regression rate
 
         // Setup font and position for each label
         double i = 0;

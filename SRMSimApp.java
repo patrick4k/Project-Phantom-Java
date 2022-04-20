@@ -1,15 +1,49 @@
 /*
-Name: Patrick kennedy
-Date: 4/8/22
-SRMSim Application file
+Name: Patrick Kennedy
+Date: 4/20/22
+SRMSim Application
 
-This file creates and pieces together the SRMSim Application
-In SRMSimApp.java:
- - The main pane for motor setup and design is created
- - The menu bar and features are set up
- - The simulation can be run
-
- SRMSimApp.java creates new panes and commits these panes to the borderPane using other classes
+Methods:
+formatImage(ImageView): void
+    - Formats an image to ensure all grain cross-section image files are processed the same and appear in identical location
+setInputUnits(): void
+    - Changes the units of the input parameters when necessary
+assesGrainSelect(): void
+    - changes input parameters for individual grains when a different grain type is selected
+addGrainToList(): void
+    - Adds inputted grain to list of grains in grainListBox
+    - Error checks inputted grain for impossible geometries
+assesPlotSelect(): void
+    - Asses choice box for the plot display
+    - Connects the plotArrayList class with motor attributes
+updatePlotPane(ArrayList<Double>,ArrayList<Double>,String,String,String): void
+    - Updates plot pane for an inputted display
+    - configurable with plot name, units and arraylist of different lengths
+assesStaticResults(): void
+    - Uses staticResults class to create a pane to view the static results of the motor
+changeMenuBar(boolean): void
+    - Updates the menu bar when coming from home pane (true) and to the home pane (false)
+showExceptionStage(String): void
+    - Shows exceptionStage with custom message through input
+showSelectedGrain(): void
+    - Updates input parameters when a grain is selected with grainListBox
+setImportedNozzle(Nozzle): void
+    - Updates input parameters to match that of the imported nozzle
+setImportedPropellant(Propellant): void
+    - Updates input parameters to match that of the imported propellant
+setImportedGrain(ArrayList<Grain>): void
+    - Updates input parameters to match that of the imported grain list
+initializeNozzle(): void
+    - Creates new Nozzle using input parameters under nozzle design
+initializePropellant(): void
+    - Creates new Propellant using input parameters under propellant design
+initializeGrains(): void
+    - Creates new ArrayList<Grain> using grainListBox
+validMotor(Motor): boolean
+    - Returns boolean if a motor is valid and geometrically possible
+    - Builds string message for exception pop up if there are errors in nozzle, propellant or grain design
+lambdaFunction(): void
+    - holds all lambda functions for most applicable nodes in application
  */
 import javafx.application.Application;
 import javafx.geometry.NodeOrientation;
@@ -57,6 +91,7 @@ public class SRMSimApp extends Application {
     private final MenuBar mainMenu;
 
     // Motor Input
+    // TODO add a update button for grain list
     private final TextField motorNameInput;
     private final designInput throatDiameterInput, exitDiameterInput, exitAngleInput;
     private final designInput densityInput, chamberTempInput, gammaInput, burnRateCoeffInput, burnRateExpInput, molarMassInput;

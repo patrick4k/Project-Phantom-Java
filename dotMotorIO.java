@@ -1,9 +1,16 @@
 /*
-importExportMotor.java
-By Patrick Kennedy
-Date Modified: 4/12/21
-This class is used to import and export a motor, this creates a custom file type of ".motor" that stores serialized attributes
-of a motor
+Name: Patrick Kennedy
+Date: 4/20/22
+
+dotMotorIO
+    - This class handles the importation and exportation of .motor files
+
+Methods:
+exportMotor(Motor): void
+    - This method takes a motor argument and creates a unique .motor file
+    - This file is serialized, hence the implementation of Serializable in all motor related classes
+importMotor(String): Motor
+    - This method takes a string filename input and outputs the corresponding motor object for said filename
  */
 
 import java.io.*;

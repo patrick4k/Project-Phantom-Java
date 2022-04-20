@@ -1,4 +1,22 @@
-import javafx.geometry.NodeOrientation;
+/*
+Name: Patrick Kennedy
+Date: 4/20/22
+
+designInput
+    - This class is a blueprint for all design input when the use creates their motor
+    - This class is used for organization and non-redundant code
+
+Methods:
+designInput(String,String,double,double): Constructor
+    - The constructor handle the creation of the nodes
+    - The String inputs is the descriptive text for input type, the second is the units th input would be in
+    - The doubles are for the location of the nodes
+getNodeArr(): ArrList<Node>
+    - Returns an arraylist of nodes that can be added to the home pane as an input
+getInputTF(): TextField
+    - Returns the text field for each design input, used for motor creation and importation
+ */
+
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -8,9 +26,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class designInput {
-    private Label inputText, units;
-    private TextField inputTF;
-    private double xLoc, yLoc;
+    private final Label inputText, units;
+    private final TextField inputTF;
+    private final double xLoc, yLoc;
 
     public designInput(String inputStr, String unitsStr, double xLoc, double yLoc) {
         double TFOffset = 120;

@@ -1,10 +1,18 @@
 /*
-Export Performance class
-By Patrick Kennedy
-Date Modified: 4/8/22
+Name: Patrick Kennedy
+Date: 4/20/22
 
-Export Performance class imports a motor and creates csv file of performance, the name of the file is the motor name and if there are
-duplicates the file saved will include a version number attached
+exportPerformance
+    - This class handles the exportation of CSV files that show the results of the SRM simulation in an organized format
+
+Methods:
+exportPerformance(Motor): Constructor
+    - The constructor imports a motor, calls the extraction method and exports CSV file
+extractMotorData(): void
+    - This method takes a motor and formats most arraylist into a ArrayList<String>
+exportCsvFile(): void
+    - This method exports the motor data as a CSV file, the filename is the motors name, if the motor name is already used
+        the file creates will add a number to the end until there is no duplicates.
  */
 import java.io.BufferedWriter;
 import java.io.File;

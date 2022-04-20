@@ -1,9 +1,23 @@
 /*
-Plot arrayList class
-By Patrick Kennedy
-Date Modified: 4/8/22
+Name: Patrick Kennedy
+Date: 4/20/22
 
-This class takes an input of two arrayList of the same size and creates a pane of a plot of those two arrayList
+plotArrayList
+    - This class is used to handle the creation of a plot pane
+
+Methods:
+plotArrayList(ArrayList<Double>, ArrayList<Double>, double, double, String, String): Constructor
+    - This constructor imports 2 arrayList, pane width and height and two string for x and y axis text
+    - Most nodes belonging to the plot pane are created and initialized within the constructor
+scaleData(): void
+    - This method formats the circle array to fit within the pane boundaries
+roundToSigFigs(double, int): String
+    - This method returns a string form of a double after that double is rounded to a specific number of significant digits
+    - This method uses math to chop off a majority of the significant digits, but requires Decimal format to compensate for java math errors
+scaleAxis(): void
+    - This method formats the axes of the plot to 5 different values
+getPlotPane(): Pane
+    - Assembles and returns the plot pane
  */
 import java.text.DecimalFormat;
 import java.util.ArrayList;

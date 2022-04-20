@@ -1,8 +1,8 @@
 /*
-Nozzle class
-By Patrick Kennedy
-Bate Modified: 4/8/22
-
+Name: Patrick kennedy
+Date: 4/20/22
+// TODO Pick up here for comment completion
+    to complete: Nozz, prop, grain, cross, tubular
 The nozzle class hold values of the nozzle being simulated, no calculations are performed within the nozzle class
  */
 
