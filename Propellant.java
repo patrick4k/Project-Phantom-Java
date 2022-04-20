@@ -19,9 +19,9 @@ public class Propellant implements Serializable {
 
     public void runPropConversion(Boolean fromEngUnits) {
         if (fromEngUnits) {
-            this.density = (27679.9)*density; // lbm/in3 to kg/m3
+            this.density = (515.379)*density; // lbm/in3 to kg/m3
             this.chamberTemp = chamberTemp/1.8; // R to K
-            this.burnRateCoeff = burnRateCoeff*(1/39.3701)*Math.pow((1/(6.895E6)),burnRateExp); // in/s/ksi^n to m/s/Pa^n
+            this.burnRateCoeff = burnRateCoeff*(1/39.3701)*Math.pow((1/(6894.76)),burnRateExp); // in/s/psi^n to m/s/Pa^n
         }
         else {
             this.burnRateCoeff =  burnRateCoeff*(1E-3)*Math.pow(1E-6,this.burnRateExp); // mm/s/MPa^n to m/s/Pa^n
@@ -31,7 +31,7 @@ public class Propellant implements Serializable {
 
     public String getDispDensity(Boolean toEngUnits) {
         if (toEngUnits) {
-            return String.valueOf(density/27679.9);
+            return String.valueOf(density/515.379);
         }
         else {
             return String.valueOf(density);
@@ -49,7 +49,7 @@ public class Propellant implements Serializable {
 
     public String getDispBurnRateCoeff(Boolean toEngUnits) {
         if (toEngUnits) {
-            return String.valueOf(burnRateCoeff*(39.3701)*Math.pow((6.895E6),burnRateExp));
+            return String.valueOf(burnRateCoeff*(39.3701)*Math.pow((6894.76),burnRateExp));
         }
         else {
             return String.valueOf(burnRateCoeff*(1E3)*Math.pow((1E6),burnRateExp));
@@ -117,7 +117,7 @@ public class Propellant implements Serializable {
     }
 
     public double getSpecificGasConst() {
-        return 8.314/this.molarMass; // convert to kg*J/K
+        return 8.3145/this.molarMass;
     }
     
     public double getCstar() {

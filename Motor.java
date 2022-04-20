@@ -18,6 +18,7 @@ public class Motor implements Serializable {
     private final ArrayList<Grain>  grainList;
 
     private boolean SIUnits = true;
+    private boolean simComplete = false;
     private String thrustUnits = "N";
     private String pressureUnits = "MPa";
     private String massUnits = "kg";
@@ -181,8 +182,9 @@ public class Motor implements Serializable {
         double c = a;
         if (exitPressureFunc(a) * exitPressureFunc(b) >= 0) {
             System.out.println("ERROR: Left or right bound incorrectly assumed");
+
         }
-        while ((b-a) >= 1E-12) {
+        while ((b-a) >= 1E-3) {
             c = (a+b)/2;
             if (exitPressureFunc(c) == 0.0)
                 break;
@@ -227,8 +229,6 @@ public class Motor implements Serializable {
     }
 
     public void runSim() {
-        //this.calcMotorVolume();
-        // while loop opens
         while ((this.burnArea > 0) || (counter == 1)) {
             this.calcRegRate();
             this.calcRegStep();
@@ -255,6 +255,7 @@ public class Motor implements Serializable {
         this.calcVolumeLoading();
         this.evaluateMotor();
         this.shiftSIUnits();
+        simComplete = true;
     }
 
     public void evaluateMotor() {
@@ -477,6 +478,9 @@ public class Motor implements Serializable {
         // Units
     public boolean isSI() {
         return SIUnits;
+    }
+    public boolean isSimulated() {
+        return simComplete;
     }
     public String getThrustUnits() {
         return thrustUnits;

@@ -41,7 +41,7 @@ public class SRMSimApp extends Application {
     private Propellant propellant;
     private Nozzle nozzle;
     private ArrayList<Grain> grains;
-    private int grainCounter;
+    private int batesCounter, crossCounter;
     private Motor motor;
     private boolean simCompleted = false;
 
@@ -105,9 +105,6 @@ public class SRMSimApp extends Application {
     // Doubles
     private final double paneHeight;
     private final double paneWidth;
-
-    /* TODO Delete once motor input is complete */
-    String motorName;
 
     // Constructor
     public SRMSimApp() throws FileNotFoundException {
@@ -256,7 +253,7 @@ public class SRMSimApp extends Application {
         setInputUnits();
 
         // dotMotor import setup
-        importTF = new TextField("presetImport");
+        importTF = new TextField("presetMotor");
         importTF.setLayoutX(0.2*paneWidth-125);
         importTF.setLayoutY(0.1*paneHeight);
         importTF.setMaxSize(200,25);
@@ -270,7 +267,7 @@ public class SRMSimApp extends Application {
         importButton.setMaxWidth(60);
         importButton.setMinWidth(60);
         importButton.setLayoutX(.2*paneWidth-30);
-        importButton.setLayoutY(.3*paneHeight-75);
+        importButton.setLayoutY(.3*paneHeight-65);
         importBorder = new BorderPane();
         importStage = new Stage();
         importPane = new Pane();
@@ -377,7 +374,7 @@ public class SRMSimApp extends Application {
 
             densityInput.setUnits("lbm/in3");
             chamberTempInput.setUnits("R");
-            burnRateCoeffInput.setUnits("in/s/ksi");
+            burnRateCoeffInput.setUnits("in/s/psi");
             molarMassInput.setUnits("lbm/lbmol");
 
             grainLengthInput.setUnits("in");
@@ -423,11 +420,7 @@ public class SRMSimApp extends Application {
         if (Objects.equals(grainChoiceBox.getValue(),"Tubular")) {
             Tubular newTubular = new Tubular();
             try {
-                newTubular.setInhibitedEnds(inhibitedEndsInput.getValue());
-                newTubular.setOuterDiameter(outerDiameterInput.getValue());
-                newTubular.setGrainLength(grainLengthInput.getValue());
-                newTubular.setInnerDiameter(innerDiameterInput.getValue());
-                newTubular.runGrainConversion(engUnitToggle.isSelected());
+
                 if (outerDiameterInput.getValue() <= innerDiameterInput.getValue()) {
                     showExceptionStage("Invalid Tubular Geometry\n\nInner diameter must be smaller than outer diameter");
                 }
@@ -435,8 +428,13 @@ public class SRMSimApp extends Application {
                     showExceptionStage("Invalid Tubular Geometry\n\nLengths cannot be zero");
                 }
                 else {
-                    grainCounter++;
-                    newTubular.setGrainName("Grain " + grainCounter);
+                    newTubular.setInhibitedEnds(inhibitedEndsInput.getValue());
+                    newTubular.setOuterDiameter(outerDiameterInput.getValue());
+                    newTubular.setGrainLength(grainLengthInput.getValue());
+                    newTubular.setInnerDiameter(innerDiameterInput.getValue());
+                    newTubular.runGrainConversion(engUnitToggle.isSelected());
+                    batesCounter++;
+                    newTubular.setGrainName("BATES " + batesCounter);
                     grainListBox.getItems().add(newTubular);
                     grainListBox.setValue(newTubular);
                 }
@@ -461,8 +459,8 @@ public class SRMSimApp extends Application {
                     showExceptionStage("Invalid Cross Geometry\n\nLengths cannot be zero");
                 }
                 else {
-                    grainCounter++;
-                    newCross.setGrainName("Grain " + grainCounter);
+                    crossCounter++;
+                    newCross.setGrainName("Cross " + crossCounter);
                     grainListBox.getItems().add(newCross);
                     grainListBox.setValue(newCross);
                 }
@@ -658,7 +656,6 @@ public class SRMSimApp extends Application {
             nozzle.setExitAngle(exitAngleInput.getValue());
             nozzle.runNozzleConversion(engUnitToggle.isSelected());
         } catch (Exception e) {
-            errorStringBuilder.append("Invalid Nozzle Geometry\n\n");
         }
     }
 
@@ -672,24 +669,19 @@ public class SRMSimApp extends Application {
             propellant.setBurnRateExp(burnRateExpInput.getValue());
             propellant.setBurnRateCoeff(burnRateCoeffInput.getValue());
             propellant.runPropConversion(engUnitToggle.isSelected());
-        } catch (Exception e) {
-            errorStringBuilder.append("Invalid Propellant Composition\n\n");
+        } catch (Exception ignored) {
         }
     }
 
     public void initializeGrains() {
         grains = new ArrayList<>();
         grains.addAll(grainListBox.getItems());
-        if (grains.size() == 0) {
-            errorStringBuilder.append("Invalid Grain Configuration\n\n");
-        }
     }
 
     public boolean validMotor(Motor motor) {
         boolean propValid = false;
         boolean nozzValid = false;
         boolean grainsValid = false;
-        boolean valid = false;
 
         Propellant prop = motor.getPropellant();
         Nozzle nozz = motor.getNozzle();
@@ -699,24 +691,21 @@ public class SRMSimApp extends Application {
             propValid = true;
         }
         else {
-            errorStringBuilder.append("Invalid Propellant Composite");
+            errorStringBuilder.append("Invalid Propellant Composite\n\n");
         }
         if ((nozz.getExitDiameter() > 0) && (nozz.getThroatDiameter() > 0) && (nozz.getExitAngle() > 0) && (nozz.getExitAngle() < 90)) {
             nozzValid = true;
         }
         else {
-            errorStringBuilder.append("Invalid Nozzle Geometry");
+            errorStringBuilder.append("Invalid Nozzle Geometry\n\n");
         }
         if (grains.size() > 0) {
             grainsValid = true;
         }
         else {
-            errorStringBuilder.append("Invalid Grain Configuration");
+            errorStringBuilder.append("Invalid Grain Configuration\n\n");
         }
-        if (propValid && nozzValid && grainsValid) {
-            valid = true;
-        }
-        return valid;
+        return propValid && nozzValid && grainsValid;
     }
 
     public void lambdaFunctions() {
@@ -735,23 +724,20 @@ public class SRMSimApp extends Application {
             initializeNozzle();
             initializeGrains();
             motor = new Motor(propellant,nozzle,grains);
-            if (!motorNameInput.getText().isEmpty()) {
-                this.motor.setMotorName(motorNameInput.getText());
+            if (motorNameInput.getText().isEmpty()) {
+                this.motor.setMotorName("myMotor");
             }
             else {
-                this.motor.setMotorName("myMotor");
+                this.motor.setMotorName(motorNameInput.getText());
             }
             if (validMotor(motor)) {
                 try {
                     motor.runSim();
-                    this.motor.runSim();
                     changeMenuBar(true);
                     simCompleted = true;
                     exceptionStage.close();
                     helpStage.close();
-                    if (engUnitToggle.isSelected()) {
-                        motor.convertResult(true);
-                    }
+                    motor.convertResult(engUnitToggle.isSelected());
                     updatePlotPane(motor.getTimeList(),motor.getThrustList(), "Thrust vs Time", motor.getTimeUnits(), motor.getThrustUnits());
                 } catch (Exception e) {
                     showExceptionStage("Sim could not be completed");
@@ -798,8 +784,8 @@ public class SRMSimApp extends Application {
         });
 
         // Change units post simulation
+        // TODO Add conversion for text fields when eng unit is toggled
         engUnitToggle.setOnAction(event -> {
-
             if ((simCompleted) && (borderPane.getCenter() == plotPane)) {
                 motor.convertResult(engUnitToggle.isSelected());
                 assesPlotSelect();

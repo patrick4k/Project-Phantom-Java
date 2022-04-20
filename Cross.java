@@ -33,7 +33,6 @@ public class Cross extends Grain implements Serializable {
     @Override
     public void runGrainConversion(Boolean fromEngUnits) {
         super.runGrainConversion(fromEngUnits);
-        System.out.println("Cross runGrainConversion() called");
         if (fromEngUnits) {
             this.width = width/39.3701; // in to m
             this.length = length/39.3701; // in to m

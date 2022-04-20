@@ -18,7 +18,6 @@ public class Grain implements Serializable {
     private String grainName;
 
     public void runGrainConversion(Boolean fromEngUnits) {
-        System.out.println("Abstract runGrainConversion() called");
         if (fromEngUnits) {
             this.grainLength = grainLength/39.3701; // in to m
             this.outerDiameter = outerDiameter/39.3701; // in to m
@@ -70,6 +69,7 @@ public class Grain implements Serializable {
 
     public  void calcPortArea(double regTotal)  {
         // Abstract
+        System.out.println("This Method is Abstract");
     }
 
     public double getPortArea() {
@@ -78,7 +78,7 @@ public class Grain implements Serializable {
 
     public double getInitialFreeVolume() {
         // Abstract
-        System.out.println("Abstract method called");
+        System.out.println("This Method is Abstract");
         return 0;
     }
 

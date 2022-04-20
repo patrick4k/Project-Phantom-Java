@@ -64,7 +64,7 @@ public class Nozzle implements Serializable {
     }
 
     public double getExitAngle() {
-        return exitAngle; // convert to rad
+        return exitAngle;
     }
 
     public void setExitAngle(double exitAngle) {

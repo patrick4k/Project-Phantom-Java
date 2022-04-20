@@ -31,7 +31,6 @@ public class Tubular extends Grain implements Serializable {
     @Override
     public void runGrainConversion(Boolean fromEngUnits) {
         super.runGrainConversion(fromEngUnits);
-        System.out.println("Tubular runGrainConversion() called");
         if (fromEngUnits) {
             this.innerDiameter = innerDiameter/39.3701; // in to m
         }
