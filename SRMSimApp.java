@@ -51,7 +51,7 @@ public class SRMSimApp extends Application {
     private Pane plotPane, staticResultsPane;
 
     // Menu Bar
-    private final MenuItem closeMI, exportPerformanceMI, exportMotorMI, importMotorMI, helpMI;
+    private final MenuItem closeMI, exportPerformanceMI, importMotorMI, exportMotorMI, helpMI;
     private final RadioMenuItem engUnitToggle;
     private final Menu fileMenu, optionsMenu, helpMenu;
     private final MenuBar mainMenu;
@@ -69,6 +69,14 @@ public class SRMSimApp extends Application {
     private Label grainListLabel;
     private ImageView tubularImage, crossImage;
 
+    // dotMotor import
+    private Label importLabel;
+    private BorderPane importBorder;
+    private Stage importStage;
+    private Pane importPane;
+    private Button importButton;
+    private TextField importTF;
+
     // Buttons
     private final Button runSimButton;
     private final Button backToMainPaneButton;
@@ -76,16 +84,17 @@ public class SRMSimApp extends Application {
     private final Button backToPlotButton;
 
     // Help
-    private Label helpLabel;
-    private BorderPane helpBorder;
-    private Stage helpStage;
-    private Pane helpPane;
+    private final Label helpLabel;
+    private final BorderPane helpBorder;
+    private final Stage helpStage;
+    private final Pane helpPane;
 
     // Exceptions
     private Label exceptionLabel;
     private BorderPane exceptionBorder;
     private Stage exceptionStage;
     private Pane exceptionPane;
+    private StringBuilder errorStringBuilder;
 
     // Addons
     private final ChoiceBox<String> plotSelect;
@@ -102,9 +111,6 @@ public class SRMSimApp extends Application {
 
     // Constructor
     public SRMSimApp() throws FileNotFoundException {
-        propellant = new Propellant();
-        nozzle = new Nozzle();
-        grains = new ArrayList<>();
 
         paneWidth = 750;
         paneHeight = 600;
@@ -124,8 +130,8 @@ public class SRMSimApp extends Application {
         helpMenu.getItems().add(helpMI);
         mainMenu = new MenuBar(fileMenu, optionsMenu, helpMenu);
 
+
         // Motor Input setup
-        /* TODO Add motor input setup */
         Label motorNameInputLabel = new Label("Motor Name:");
         motorNameInputLabel.setFont(new Font(14));
         motorNameInputLabel.setLayoutX(10);
@@ -215,9 +221,9 @@ public class SRMSimApp extends Application {
             }
             @Override
             public Grain fromString(String grainName) {
-                Grain returnGrain = null;
-                for (Grain grain:grains) {
-                    if (Objects.equals(grainName,grain.getGrainName())) {
+                Grain returnGrain = new Grain();
+                for (Grain grain:grainListBox.getItems()) {
+                    if (Objects.equals(grain.getGrainName(),grainName)) {
                         returnGrain = grain;
                     }
                 }
@@ -248,6 +254,33 @@ public class SRMSimApp extends Application {
         removeGrain.setLayoutY(grainListBox.getLayoutY());
 
         setInputUnits();
+
+        // dotMotor import setup
+        importTF = new TextField("presetImport");
+        importTF.setLayoutX(0.2*paneWidth-125);
+        importTF.setLayoutY(0.1*paneHeight);
+        importTF.setMaxSize(200,25);
+        importTF.setMinSize(200,25);
+        importLabel = new Label(".motor");
+        importLabel.setMaxSize(100,30);
+        importLabel.setMinSize(100,30);
+        importLabel.setLayoutX(importTF.getLayoutX()+210);
+        importLabel.setLayoutY(importTF.getLayoutY());
+        importButton = new Button("Import");
+        importButton.setMaxWidth(60);
+        importButton.setMinWidth(60);
+        importButton.setLayoutX(.2*paneWidth-30);
+        importButton.setLayoutY(.3*paneHeight-75);
+        importBorder = new BorderPane();
+        importStage = new Stage();
+        importPane = new Pane();
+        importPane.getChildren().addAll(importTF,importLabel, importButton);
+        importBorder.setCenter(importPane);
+        Scene importScene = new Scene(importBorder, 0.4*paneWidth, 0.3*paneHeight);
+        importStage = new Stage();
+        importStage.setScene(importScene);
+        importStage.setResizable(false);
+        importStage.setTitle("Import Motor");
 
         // Define Run Sim button
         runSimButton = new Button("Calculate Motor Performance");
@@ -398,6 +431,9 @@ public class SRMSimApp extends Application {
                 if (outerDiameterInput.getValue() <= innerDiameterInput.getValue()) {
                     showExceptionStage("Invalid Tubular Geometry\n\nInner diameter must be smaller than outer diameter");
                 }
+                else if ((outerDiameterInput.getValue() == 0) || (innerDiameterInput.getValue() == 0) || (grainLengthInput.getValue() == 0)) {
+                    showExceptionStage("Invalid Tubular Geometry\n\nLengths cannot be zero");
+                }
                 else {
                     grainCounter++;
                     newTubular.setGrainName("Grain " + grainCounter);
@@ -420,6 +456,9 @@ public class SRMSimApp extends Application {
                 newCross.runGrainConversion(engUnitToggle.isSelected());
                 if ((slitLengthInput.getValue() >= outerDiameterInput.getValue()/2) || (slitWidthInput.getValue() >= outerDiameterInput.getValue())) {
                     showExceptionStage("Invalid Cross Geometry\n\nSlits cannot be exceed bounds of motor");
+                }
+                else if ((outerDiameterInput.getValue() == 0) || (slitWidthInput.getValue() == 0) || (slitLengthInput.getValue() == 0)|| (grainLengthInput.getValue() == 0)) {
+                    showExceptionStage("Invalid Cross Geometry\n\nLengths cannot be zero");
                 }
                 else {
                     grainCounter++;
@@ -531,20 +570,15 @@ public class SRMSimApp extends Application {
     }
 
     public void updatePlotPane(ArrayList<Double> xArr, ArrayList<Double> yArr, String plotTitleText, String xAxisTitle, String yAxisTitle) {
-        if (xArr.size() == yArr.size()) {
-            plotArrayList plot = new plotArrayList(xArr,yArr,paneHeight,paneWidth, xAxisTitle, yAxisTitle);
-            plotSelect.setValue(plotTitleText);
-            plotPane = plot.getPlotPane();
-            plotHeaderLabel = new Label(motor.getMotorName() + " Performance");
-            plotHeaderLabel.setFont(Font.font(null,FontWeight.BOLD,16));
-            plotHeaderLabel.setLayoutX(60);
-            plotHeaderLabel.setLayoutY(10);
-            plotPane.getChildren().addAll(backToMainPaneButton, plotSelect, viewStaticButton, plotHeaderLabel);
-            borderPane.setCenter(plotPane);
-        }
-        else {
-            System.out.println("ERR NO SIZE MATCH");
-        }
+        plotArrayList plot = new plotArrayList(xArr,yArr,paneHeight,paneWidth, xAxisTitle, yAxisTitle);
+        plotSelect.setValue(plotTitleText);
+        plotPane = plot.getPlotPane();
+        plotHeaderLabel = new Label(motor.getMotorName() + " Performance");
+        plotHeaderLabel.setFont(Font.font(null,FontWeight.BOLD,16));
+        plotHeaderLabel.setLayoutX(60);
+        plotHeaderLabel.setLayoutY(10);
+        plotPane.getChildren().addAll(backToMainPaneButton, plotSelect, viewStaticButton, plotHeaderLabel);
+        borderPane.setCenter(plotPane);
     }
 
     public void assesStaticResults() {
@@ -624,7 +658,7 @@ public class SRMSimApp extends Application {
             nozzle.setExitAngle(exitAngleInput.getValue());
             nozzle.runNozzleConversion(engUnitToggle.isSelected());
         } catch (Exception e) {
-            showExceptionStage("Invalid Nozzle Geometry");
+            errorStringBuilder.append("Invalid Nozzle Geometry\n\n");
         }
     }
 
@@ -639,13 +673,50 @@ public class SRMSimApp extends Application {
             propellant.setBurnRateCoeff(burnRateCoeffInput.getValue());
             propellant.runPropConversion(engUnitToggle.isSelected());
         } catch (Exception e) {
-            showExceptionStage("Invalid Nozzle Geometry");
+            errorStringBuilder.append("Invalid Propellant Composition\n\n");
         }
     }
 
     public void initializeGrains() {
         grains = new ArrayList<>();
         grains.addAll(grainListBox.getItems());
+        if (grains.size() == 0) {
+            errorStringBuilder.append("Invalid Grain Configuration\n\n");
+        }
+    }
+
+    public boolean validMotor(Motor motor) {
+        boolean propValid = false;
+        boolean nozzValid = false;
+        boolean grainsValid = false;
+        boolean valid = false;
+
+        Propellant prop = motor.getPropellant();
+        Nozzle nozz = motor.getNozzle();
+        ArrayList<Grain> grains = motor.getGrainList();
+        if ((prop.getGamma() > 0) && (prop.getDensity() > 0) && (prop.getBurnRateExp() > 0) && (prop.getBurnRateCoeff() > 0) &&
+                (prop.getChamberTemp() > 0) & (prop.getMolarMass() > 0)) {
+            propValid = true;
+        }
+        else {
+            errorStringBuilder.append("Invalid Propellant Composite");
+        }
+        if ((nozz.getExitDiameter() > 0) && (nozz.getThroatDiameter() > 0) && (nozz.getExitAngle() > 0) && (nozz.getExitAngle() < 90)) {
+            nozzValid = true;
+        }
+        else {
+            errorStringBuilder.append("Invalid Nozzle Geometry");
+        }
+        if (grains.size() > 0) {
+            grainsValid = true;
+        }
+        else {
+            errorStringBuilder.append("Invalid Grain Configuration");
+        }
+        if (propValid && nozzValid && grainsValid) {
+            valid = true;
+        }
+        return valid;
     }
 
     public void lambdaFunctions() {
@@ -658,42 +729,35 @@ public class SRMSimApp extends Application {
             assesGrainSelect();
         });
 
-        // Run sim with inputted motor
-        runSimButton.setOnMouseClicked(event -> {
-            try {
-                initializeNozzle();
-                initializePropellant();
-                initializeGrains();
-                this.motor = new Motor(propellant,nozzle,grains);
-
-                if (!motorNameInput.getText().isEmpty()) {
-                    this.motor.setMotorName(motorNameInput.getText());
+        runSimButton.setOnAction(event -> {
+            errorStringBuilder = new StringBuilder();
+            initializePropellant();
+            initializeNozzle();
+            initializeGrains();
+            motor = new Motor(propellant,nozzle,grains);
+            if (!motorNameInput.getText().isEmpty()) {
+                this.motor.setMotorName(motorNameInput.getText());
+            }
+            else {
+                this.motor.setMotorName("myMotor");
+            }
+            if (validMotor(motor)) {
+                try {
+                    motor.runSim();
+                    this.motor.runSim();
+                    changeMenuBar(true);
+                    simCompleted = true;
+                    exceptionStage.close();
+                    helpStage.close();
+                    if (engUnitToggle.isSelected()) {
+                        motor.convertResult(true);
+                    }
+                    updatePlotPane(motor.getTimeList(),motor.getThrustList(), "Thrust vs Time", motor.getTimeUnits(), motor.getThrustUnits());
+                } catch (Exception e) {
+                    showExceptionStage("Sim could not be completed");
                 }
-                else {
-                    this.motor.setMotorName("myMotor");
-                }
-                this.motor.runSim();
-
-                changeMenuBar(true);
-                simCompleted = true;
-                exceptionStage.close();
-                helpStage.close();
-                if (engUnitToggle.isSelected()) {
-                    motor.convertResult(true);
-                }
-                updatePlotPane(motor.getTimeList(),motor.getThrustList(), "Thrust vs Time", motor.getTimeUnits(), motor.getThrustUnits());
-            } catch (Exception e) {
-                e.printStackTrace();
-                StringBuilder errorStringBuilder = new StringBuilder("Sim could not run with current config\n\n");
-                if (Objects.isNull(propellant)) {
-                    errorStringBuilder.append("Propellant Necessary for Simulation\n\n");
-                }
-                if (Objects.isNull(nozzle)) {
-                    errorStringBuilder.append("Nozzle Necessary for Simulation\n\n");
-                }
-                if (Objects.isNull(grains)) {
-                    errorStringBuilder.append("Grains Necessary for Simulation\n\n");
-                }
+            }
+            else {
                 showExceptionStage(errorStringBuilder.toString());
             }
         });
@@ -704,7 +768,6 @@ public class SRMSimApp extends Application {
         });
 
         removeGrain.setOnAction(event -> {
-            grains.remove(grainListBox.getValue());
             grainListBox.getItems().remove(grainListBox.getValue());
         });
 
@@ -717,7 +780,7 @@ public class SRMSimApp extends Application {
             try {
                 new exportPerformance(motor);
             } catch (IOException e) {
-                e.printStackTrace();
+                showExceptionStage("CSV file could not be exported");
             }
         });
 
@@ -752,7 +815,11 @@ public class SRMSimApp extends Application {
         });
         // Import .motor file
         importMotorMI.setOnAction(event -> {
-            String filename = "defaultTestMotorEngUnits.motor";
+            importStage.close();
+            importStage.show();
+        });
+        importButton.setOnAction(event -> {
+            String filename = importTF.getText() + ".motor";
             Motor motorImport = dotMotorIO.importMotor(filename);
             try {
                 engUnitToggle.setSelected(!motorImport.isSI());
@@ -760,15 +827,20 @@ public class SRMSimApp extends Application {
                 setImportedNozzle(motorImport.getNozzle());
                 setImportedPropellant(motorImport.getPropellant());
                 setImportedGrains(motorImport.getGrainList());
-
                 motorNameInput.setText(motorImport.getMotorName());
-
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                showExceptionStage("File not found");
+            } finally {
+                importStage.close();
             }
         });
         // Export .motor file
         exportMotorMI.setOnAction(event -> {
-            dotMotorIO.exportMotor(motor);
+            try {
+                dotMotorIO.exportMotor(motor);
+            } catch (Exception e) {
+                showExceptionStage("Could not export .motor file");
+            }
         });
         // Update and view 
         viewStaticButton.setOnAction(event -> {

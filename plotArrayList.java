@@ -39,6 +39,12 @@ public class plotArrayList {
     public plotArrayList(ArrayList<Double> arrX, ArrayList<Double> arrY, double paneHeight, double paneWidth, String xAxisText, String yAxisText) {
         this.arrX = arrX;
         this.arrY = arrY;
+        while (arrX.size() > arrY.size()) {
+            arrY.add(0.0);
+        }
+        while (arrY.size() > arrX.size()) {
+            arrX.add(0.0);
+        }
         this.paneHeight = paneHeight;
         this.paneWidth = paneWidth;
         topBorderLine = new Line(0,45,paneWidth,45);
