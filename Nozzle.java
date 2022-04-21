@@ -1,11 +1,25 @@
 /*
 Name: Patrick kennedy
 Date: 4/20/22
-// TODO Pick up here for comment completion
-    to complete: Nozz, prop, grain, cross, tubular
-The nozzle class hold values of the nozzle being simulated, no calculations are performed within the nozzle class
- */
 
+Nozzle
+    - This class holds information on the motor nozzle and its properties
+
+Attributes:
+throatDiameter: double
+    - Diameter across throat cross-section of the nozzle
+exitDiameter: double
+    - Diameter across exit cross-section of the nozzle
+exitAngle: double
+    - Angle of divergence from throat to exit
+
+Methods:
+runNozzleConversion(Boolean): void
+    - This method converts input values into base SI units which are used for calculations
+    - Will convert english units to base SI and non-base SI units to base SI
+getDisp_________(Boolean): String
+    - Returns display value of attributes, if GUI is in SI units will return SI, if english will return english
+ */
 import java.io.Serializable;
 
 public class Nozzle implements Serializable {

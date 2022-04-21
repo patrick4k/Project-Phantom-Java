@@ -1,11 +1,27 @@
 /*
-Cross class
-By Patrick Kennedy
-Date Modified: 4/8/22
+Name: Patrick Kennedy
+Date: 4/20/22
 
-Cross is an extension of the Grain class, the cross grain overrides various calculation to adhere to the cross geometry
+Cross
+    - This class is an extension of the grain class, a cross is a grain shape
+
+Attributes:
+width: double
+    - width of each slit in the cross geometry
+length: double
+    - length of each slit in the cross geometry
+
+Methods:
+runPropConversion(Boolean): void
+    - This method converts input values into base SI units which are used for calculations
+    - Will convert english units to base SI and non-base SI units to base SI
+getDisp_________(Boolean): String
+    - Returns display value of attributes, if GUI is in SI units will return SI, if english will return english
+calcBurnArea(double): void
+    - Calculates and updates the instantaneous burn area of the grain as a function of total regression
+calcPortArea(double): void
+    - Calculates and updates the instantaneous port area of the grain as a function of total regression
  */
-
 import java.io.Serializable;
 
 public class Cross extends Grain implements Serializable {
@@ -18,15 +34,6 @@ public class Cross extends Grain implements Serializable {
         }
         else {
             return String.valueOf(width*100);
-        }
-    }
-
-    public String getDispSlitLength(Boolean toEngUnits) {
-        if (toEngUnits) {
-            return String.valueOf(length*39.3701);
-        }
-        else {
-            return String.valueOf(length*100);
         }
     }
 
@@ -87,9 +94,7 @@ public class Cross extends Grain implements Serializable {
 
     public void setWidth(double width) {
         this.width = width;
+        this.length = (getOuterDiameter()/2)-(width/2);
     }
 
-    public void setLength(double length) {
-        this.length = length;
-    }
 }

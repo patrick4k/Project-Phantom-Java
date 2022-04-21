@@ -39,8 +39,9 @@ public class designInput {
         inputText.setLayoutX(xLoc);
         inputText.setLayoutY(yLoc);
         inputText.setFont(new Font(14));
-        inputTF = new TextField();
-        inputTF.setMaxSize(100,10);
+        inputTF = new TextField("0.0");
+        inputTF.setMaxSize(100,25);
+        inputTF.setMinSize(100,25);
         inputTF.setLayoutX(xLoc + TFOffset);
         inputTF.setLayoutY(yLoc);
 
@@ -88,7 +89,12 @@ public class designInput {
     }
 
     public double getValue() {
-        return Double.parseDouble(inputTF.getText());
+        double returnValue = 0;
+        try {
+            returnValue = Double.parseDouble(inputTF.getText());
+        } catch (Exception ignored) {
+        }
+        return returnValue;
     }
 
 }

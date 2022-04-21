@@ -12,7 +12,6 @@ exportMotor(Motor): void
 importMotor(String): Motor
     - This method takes a string filename input and outputs the corresponding motor object for said filename
  */
-
 import java.io.*;
 import java.util.Objects;
 

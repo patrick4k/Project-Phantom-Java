@@ -5,6 +5,16 @@ Date: 4/20/22
 Motor
     - This class contains all calculations for the internal ballistics of a solid rocket motor
 
+Attributes:
+motorName: String
+    - User selected name of motor
+propellant: Propellant
+    - Object of Propellant class that stores data on a motors propellant type
+nozzle: Nozzle
+    - Object of Nozzle class that stores data on a motors nozzle
+grains: ArrayList<Grain>
+    - Array list of Grain objects. Stores data on a motors grain configuration
+
 Methods:
 Motor(Propellant, Nozzle, ArrayList<Grain>): Constructor
     - Sets propellant, nozzle and grain configuration
@@ -52,7 +62,6 @@ shiftSIUnits: void
 convertResults(boolean): void
     - Converts results from SI to english (true) or english to SI (false)
  */
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;

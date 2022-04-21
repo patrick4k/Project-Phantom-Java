@@ -1,12 +1,31 @@
 /*
-Propellant class
-By Patrick Kennedy
-Bate Modified: 4/8/22
+Name: Patrick Kennedy
+Date: 4/20/22
 
-The propellant class hold values of the propellant being simulated, no calculations are performed within the propellant class
-with exception to cStar
+Propellant
+    - This class holds information on the motors propellant and its properties
+
+Attributes:
+density: double
+    - Density of propellant
+chamberTemp: double
+    - Burning temperature of propellant
+gamma: double
+    - specific heat ratio of propellant
+burnRateCoeff: double
+    - burn rate coefficient for propellant, unit conversion is highly dependent on burnRateExp
+burnRateExp: double
+    - burn rate exponent for propellant
+molarMass: double
+    - molar mass of propellant
+
+Methods:
+runPropConversion(Boolean): void
+    - This method converts input values into base SI units which are used for calculations
+    - Will convert english units to base SI and non-base SI units to base SI
+getDisp_________(Boolean): String
+    - Returns display value of attributes, if GUI is in SI units will return SI, if english will return english
  */
-
 import java.io.Serializable;
 
 public class Propellant implements Serializable {
@@ -19,9 +38,9 @@ public class Propellant implements Serializable {
 
     public void runPropConversion(Boolean fromEngUnits) {
         if (fromEngUnits) {
-            this.density = (515.379)*density; // lbm/in3 to kg/m3
+            this.density = (16.0185)*density; // lbm/ft3 to kg/m3
             this.chamberTemp = chamberTemp/1.8; // R to K
-            this.burnRateCoeff = burnRateCoeff*(1/39.3701)*Math.pow((1/(6894.76)),burnRateExp); // in/s/psi^n to m/s/Pa^n
+            this.burnRateCoeff = burnRateCoeff*(1/39.3701)*Math.pow(1/6894.76,burnRateExp); // in/s/psi^n to m/s/Pa^n
         }
         else {
             this.burnRateCoeff =  burnRateCoeff*(1E-3)*Math.pow(1E-6,this.burnRateExp); // mm/s/MPa^n to m/s/Pa^n
@@ -31,7 +50,7 @@ public class Propellant implements Serializable {
 
     public String getDispDensity(Boolean toEngUnits) {
         if (toEngUnits) {
-            return String.valueOf(density/515.379);
+            return String.valueOf(density/16.0185);
         }
         else {
             return String.valueOf(density);
@@ -49,7 +68,7 @@ public class Propellant implements Serializable {
 
     public String getDispBurnRateCoeff(Boolean toEngUnits) {
         if (toEngUnits) {
-            return String.valueOf(burnRateCoeff*(39.3701)*Math.pow((6894.76),burnRateExp));
+            return String.valueOf(burnRateCoeff*(39.3701)*Math.pow(6894.76,burnRateExp)); // m/s/Pa to in/s/psi
         }
         else {
             return String.valueOf(burnRateCoeff*(1E3)*Math.pow((1E6),burnRateExp));
