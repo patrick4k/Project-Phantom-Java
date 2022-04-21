@@ -1,12 +1,31 @@
 /*
-Grain class
-By Patrick Kennedy
-Date Modified: 4/8/22
+Name: Patrick Kennedy
+Date: 4/20/22
 
-The Grain class is an abstract class for separate grains, the Grain class holds basic functionality of setters and getters
-and allows adaptability for different grain geometries
+Grain
+    - This class holds information on the motors grain and its properties
+
+Attributes:
+grainName: String
+    - name of grain, used for GUI handling
+outerDiameter: double
+    - outer diameter of grain
+grainLength: double
+    - length of grain
+inhibitedEnds: double
+    - number of inhibited ends for grain
+burnArea: double
+    - instantaneous burning surface area of grain
+portArea: double
+    - exposed cross-sectional area of grain
+
+Methods:
+runPropConversion(Boolean): void
+    - This method converts input values into base SI units which are used for calculations
+    - Will convert english units to base SI and non-base SI units to base SI
+getDisp_________(Boolean): String
+    - Returns display value of attributes, if GUI is in SI units will return SI, if english will return english
  */
-
 import java.io.Serializable;
 
 public class Grain implements Serializable {

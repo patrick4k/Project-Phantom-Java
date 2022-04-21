@@ -21,13 +21,6 @@ public class test {
         // Print Results
         System.out.println("Mass Flux " + testMotor.getMassFluxList());
         System.out.println("Time: " + testMotor.getTimeList());
-
-        // Unit Test for burn area calculation
-        testMotor.printBurnAreaAtRegTotal(.01431125); // <- uncomment this line to run unit test
-        // Unit test results
-        // regTotal = 3.8506E-6 => burnArea = 0.012040140648811436
-        // regTotal = 0.015 => burnArea = 0.0
-        // regTotal = 0.01431125 => burnArea = 0.0
     }
 
     public Motor initMotor() {

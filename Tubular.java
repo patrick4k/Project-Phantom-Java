@@ -1,11 +1,25 @@
 /*
-Tubular class
-By Patrick Kennedy
-Date Modified: 4/8/22
+Name: Patrick Kennedy
+Date: 4/20/22
 
-Tubular is an extension of the Grain class, the Tubular grain overrides various calculation to adhere to the tubular geometry
+Tubular
+    - This class is an extension of the grain class, tubular is a grain shape
+
+Attributes:
+innerDiameter: double
+    - inner diameter of tubular grain
+
+Methods:
+runPropConversion(Boolean): void
+    - This method converts input values into base SI units which are used for calculations
+    - Will convert english units to base SI and non-base SI units to base SI
+getDisp_________(Boolean): String
+    - Returns display value of attributes, if GUI is in SI units will return SI, if english will return english
+calcBurnArea(double): void
+    - Calculates and updates the instantaneous burn area of the grain as a function of total regression
+calcPortArea(double): void
+    - Calculates and updates the instantaneous port area of the grain as a function of total regression
  */
-
 import java.io.Serializable;
 
 public class Tubular extends Grain implements Serializable {

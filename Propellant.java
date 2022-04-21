@@ -1,12 +1,31 @@
 /*
-Propellant class
-By Patrick Kennedy
-Bate Modified: 4/8/22
+Name: Patrick Kennedy
+Date: 4/20/22
 
-The propellant class hold values of the propellant being simulated, no calculations are performed within the propellant class
-with exception to cStar
+Propellant
+    - This class holds information on the motors propellant and its properties
+
+Attributes:
+density: double
+    - Density of propellant
+chamberTemp: double
+    - Burning temperature of propellant
+gamma: double
+    - specific heat ratio of propellant
+burnRateCoeff: double
+    - burn rate coefficient for propellant, unit conversion is highly dependent on burnRateExp
+burnRateExp: double
+    - burn rate exponent for propellant
+molarMass: double
+    - molar mass of propellant
+
+Methods:
+runPropConversion(Boolean): void
+    - This method converts input values into base SI units which are used for calculations
+    - Will convert english units to base SI and non-base SI units to base SI
+getDisp_________(Boolean): String
+    - Returns display value of attributes, if GUI is in SI units will return SI, if english will return english
  */
-
 import java.io.Serializable;
 
 public class Propellant implements Serializable {
