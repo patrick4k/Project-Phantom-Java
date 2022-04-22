@@ -973,8 +973,6 @@ public class SRMSimApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         lambdaFunctions();
-
-        // SETUP
         Scene scene = new Scene(borderPane, paneWidth, paneHeight);
         borderPane.setCenter(homePane);
         borderPane.setTop(mainMenu);
