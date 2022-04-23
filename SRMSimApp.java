@@ -93,18 +93,18 @@ public class SRMSimApp extends Application {
     private final ArrayList<designInput> batesInputArr, crossInputArr;
     private final Button addGrain, removeGrain, updateGrain;
     private final TextField grainNameTF;
-    private ChoiceBox<Grain> grainListBox;
-    private Label grainListLabel, grainNameLabel;
-    private ImageView tubularImage, crossImage;
-    private ImageView phantomLogo;
+    private final ChoiceBox<Grain> grainListBox;
+    private final Label grainListLabel, grainNameLabel;
+    private final ImageView tubularImage, crossImage;
+    private final ImageView phantomLogo;
 
     // dotMotor import
-    private Label importLabel;
-    private BorderPane importBorder;
+    private final Label importLabel;
+    private final BorderPane importBorder;
     private Stage importStage;
-    private Pane importPane;
-    private Button importButton;
-    private TextField importTF;
+    private final Pane importPane;
+    private final Button importButton;
+    private final TextField importTF;
 
     // Buttons
     private final Button runSimButton;
@@ -119,17 +119,17 @@ public class SRMSimApp extends Application {
     private final Pane helpPane;
 
     // Exceptions
-    private Label exceptionLabel;
-    private BorderPane exceptionBorder;
-    private Stage exceptionStage;
-    private Pane exceptionPane;
+    private final Label exceptionLabel;
+    private final BorderPane exceptionBorder;
+    private final Stage exceptionStage;
+    private final Pane exceptionPane;
     private StringBuilder errorStringBuilder;
 
     // Addons
     private final ChoiceBox<String> plotSelect;
     private final ChoiceBox<String> grainChoiceBox;
     private Label plotHeaderLabel;
-    private Line topBorderLine;
+    private final Line topBorderLine;
 
     // Doubles
     private final double paneHeight;
@@ -372,12 +372,10 @@ public class SRMSimApp extends Application {
 
         Image phantomImage = new Image(new FileInputStream("phantom_logo.png"));
         phantomLogo = new ImageView(phantomImage);
-        phantomLogo.setLayoutX(-25);
-        phantomLogo.setLayoutY(paneHeight - 200);
+        phantomLogo.setLayoutX(-15);
+        phantomLogo.setLayoutY(paneHeight - 175);
         phantomLogo.setPreserveRatio(true);
-        phantomLogo.setFitHeight(300);
-
-
+        phantomLogo.setFitHeight(250);
 
         // General Setup
         topBorderLine = new Line(0,45,paneWidth,45);
