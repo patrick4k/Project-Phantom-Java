@@ -17,7 +17,7 @@ import java.util.Objects;
 
 public class dotMotorIO {
 
-    public static void exportMotor(Motor motor) {
+    public static void exportMotor(Motor motor, boolean overrideFile) {
         try {
             String motorName = motor.getMotorName();
             if (Objects.isNull(motorName)) { // Auto assign name
@@ -25,9 +25,11 @@ public class dotMotorIO {
             }
             int i = 0;
             File file = new File(motorName + ".motor");
-            while (file.isFile()) {
-                i++;
-                file = new File(motorName + "(" + i + ").motor");
+            if (!overrideFile) {
+                while (file.isFile()) {
+                    i++;
+                    file = new File(motorName + "(" + i + ").motor");
+                }
             }
             FileOutputStream saveFile = new FileOutputStream(file.getName());
             ObjectOutputStream save = new ObjectOutputStream(saveFile);

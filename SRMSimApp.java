@@ -79,7 +79,7 @@ public class SRMSimApp extends Application {
 
     // Menu Bar
     private final MenuItem closeMI, exportPerformanceMI, importMotorMI, exportMotorMI, helpMI;
-    private final RadioMenuItem engUnitToggle;
+    private final RadioMenuItem engUnitToggle, overrideFileToggle;
     private final Menu fileMenu, optionsMenu, helpMenu;
     private final MenuBar mainMenu;
 
@@ -143,13 +143,14 @@ public class SRMSimApp extends Application {
 
         // Menu bar setup
         closeMI = new MenuItem("Close Sim");
+        overrideFileToggle = new RadioMenuItem("Override Filename");
         exportPerformanceMI = new MenuItem("Export .CSV");
         exportMotorMI = new MenuItem("Export .motor");
         importMotorMI = new MenuItem("Import .motor");
         helpMI = new MenuItem("Show Help");
         engUnitToggle = new RadioMenuItem("English Units");
         fileMenu = new Menu("File");
-        fileMenu.getItems().addAll(importMotorMI, closeMI);
+        fileMenu.getItems().addAll(overrideFileToggle, importMotorMI, closeMI);
         optionsMenu = new Menu("Options");
         optionsMenu.getItems().add(engUnitToggle);
         helpMenu = new Menu("Help");
@@ -195,6 +196,7 @@ public class SRMSimApp extends Application {
         grainChoiceBox.setValue("Tubular");
 
         grainNameLabel = new Label("Gain Name");
+        grainNameLabel.setFont(new Font(14));
         grainNameLabel.setLayoutX(grainLabel.getLayoutX());
         grainNameLabel.setLayoutY(grainChoiceBox.getLayoutY()+30);
         grainNameTF = new TextField("New Grain");
@@ -702,11 +704,11 @@ public class SRMSimApp extends Application {
     public void changeMenuBar(boolean fromHomePane) {
         if (fromHomePane) {
             fileMenu.getItems().clear();
-            fileMenu.getItems().addAll(exportPerformanceMI, exportMotorMI, closeMI);
+            fileMenu.getItems().addAll(overrideFileToggle, exportPerformanceMI, exportMotorMI, closeMI);
         }
         else {
             fileMenu.getItems().clear();
-            fileMenu.getItems().addAll(importMotorMI, closeMI);
+            fileMenu.getItems().addAll(overrideFileToggle, importMotorMI, closeMI);
         }
     }
 
@@ -881,7 +883,7 @@ public class SRMSimApp extends Application {
         // Export Results as CSV file
         exportPerformanceMI.setOnAction(event -> {
             try {
-                new exportPerformance(motor);
+                new exportPerformance(motor, overrideFileToggle.isSelected());
             } catch (IOException e) {
                 showExceptionStage("CSV file could not be exported");
             }
@@ -901,7 +903,6 @@ public class SRMSimApp extends Application {
         });
 
         // Change units post simulation
-        // TODO Add conversion for text fields when eng unit is toggled
         engUnitToggle.setOnAction(event -> {
             if (simCompleted) {
                 motor.convertResult(engUnitToggle.isSelected());
@@ -940,7 +941,7 @@ public class SRMSimApp extends Application {
         // Export .motor file
         exportMotorMI.setOnAction(event -> {
             try {
-                dotMotorIO.exportMotor(motor);
+                dotMotorIO.exportMotor(motor, overrideFileToggle.isSelected());
             } catch (Exception e) {
                 showExceptionStage("Could not export .motor file");
             }

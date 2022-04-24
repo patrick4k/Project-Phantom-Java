@@ -54,7 +54,6 @@ public class staticResults {
         staticResultLabels.add(new Label("C* = " + roundToSigFigs(motor.getcStar(), 6) + " " + motor.getVelocityUnits()));
         staticResultLabels.add(new Label("Initial Kn = " + roundToSigFigs(motor.getInitalKn(), 6)));
         staticResultLabels.add(new Label("Max Kn = " + roundToSigFigs(motor.getMaxKn(), 6)));
-        // TODO add average regression rate
 
         // Setup font and position for each label
         double i = 0;

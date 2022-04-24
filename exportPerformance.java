@@ -25,10 +25,10 @@ public class exportPerformance {
     private final Motor motor;
     private final ArrayList<String> formattedData = new ArrayList<>();
 
-    public exportPerformance(Motor motor) throws IOException {
+    public exportPerformance(Motor motor, boolean overrideFile) throws IOException {
         this.motor = motor;
         extractMotorData();
-        exportCsvFile();
+        exportCsvFile(overrideFile);
     }
 
     public void extractMotorData() {
@@ -57,16 +57,18 @@ public class exportPerformance {
         }
     }
 
-    public void exportCsvFile() throws IOException {
+    public void exportCsvFile(boolean overrideFile) throws IOException {
         String motorName = motor.getMotorName();
         if (Objects.isNull(motorName)) { // Auto assign name
             motorName = "myMotor";
         }
         int i = 0;
         File file = new File(motorName + ".csv");
-        while (file.isFile()) {
-            i++;
-            file = new File(motorName + "(" + i + ").csv");
+        if (!overrideFile) {
+            while (file.isFile()) {
+                i++;
+                file = new File(motorName + "(" + i + ").csv");
+            }
         }
         FileWriter fileWriter = new FileWriter(file);
         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
