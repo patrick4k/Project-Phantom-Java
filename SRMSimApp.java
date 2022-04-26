@@ -90,7 +90,8 @@ public class SRMSimApp extends Application {
     private final designInput inhibitedEndsInput, grainLengthInput, outerDiameterInput;
     private final designInput innerDiameterInput;
     private final designInput slitWidthInput;
-    private final ArrayList<designInput> batesInputArr, crossInputArr;
+    private final designInput offsetInput;
+    private final ArrayList<designInput> batesInputArr, crossInputArr, moonInputArr;
     private final Button addGrain, removeGrain, updateGrain;
     private final TextField grainNameTF;
     private final ChoiceBox<Grain> grainListBox;
@@ -190,7 +191,7 @@ public class SRMSimApp extends Application {
         grainLabel.setLayoutX(400);
         grainLabel.setLayoutY(nozzLabel.getLayoutY());
         grainChoiceBox = new ChoiceBox<>();
-        grainChoiceBox.getItems().addAll("Tubular","Cross");
+        grainChoiceBox.getItems().addAll("Tubular","Cross","Moon");
         grainChoiceBox.setLayoutX(grainLabel.getLayoutX() + 120);
         grainChoiceBox.setLayoutY(grainLabel.getLayoutY());
         grainChoiceBox.setValue("Tubular");
@@ -239,10 +240,17 @@ public class SRMSimApp extends Application {
         crossInputArr.add(grainLengthInput);
         crossInputArr.add(outerDiameterInput);
         crossInputArr.add(slitWidthInput);
+        moonInputArr = new ArrayList<>();
+        offsetInput = new designInput("Offset","",grainLabel.getLayoutX(), innerDiameterInput.getyLoc()+25);
+        moonInputArr.add(inhibitedEndsInput);
+        moonInputArr.add(grainLengthInput);
+        moonInputArr.add(outerDiameterInput);
+        moonInputArr.add(innerDiameterInput);
+        moonInputArr.add(offsetInput);
 
         grainListLabel = new Label("Current Grain Configuration");
         grainListLabel.setLayoutX(grainLabel.getLayoutX());
-        grainListLabel.setLayoutY(slitWidthInput.getyLoc()+50);
+        grainListLabel.setLayoutY(offsetInput.getyLoc()+50);
         grainListLabel.setFont(new Font(15));
         grainListBox = new ChoiceBox<>();
         grainListBox.setLayoutX(grainLabel.getLayoutX());
@@ -429,6 +437,7 @@ public class SRMSimApp extends Application {
             outerDiameterInput.setUnits("in");
             innerDiameterInput.setUnits("in");
             slitWidthInput.setUnits("in");
+            offsetInput.setUnits("in");
         }
         else {
             throatDiameterInput.setUnits("cm");
@@ -443,6 +452,7 @@ public class SRMSimApp extends Application {
             outerDiameterInput.setUnits("cm");
             innerDiameterInput.setUnits("cm");
             slitWidthInput.setUnits("cm");
+            offsetInput.setUnits("cm");
         }
     }
 
@@ -472,6 +482,7 @@ public class SRMSimApp extends Application {
     public void assesGrainSelect() {
         homePane.getChildren().removeAll(innerDiameterInput.getNodeArr());
         homePane.getChildren().removeAll(slitWidthInput.getNodeArr());
+        homePane.getChildren().removeAll(offsetInput.getNodeArr());
         homePane.getChildren().removeAll(tubularImage,crossImage);
         if (Objects.equals(grainChoiceBox.getValue(),"Tubular")) {
             homePane.getChildren().addAll(innerDiameterInput.getNodeArr());
@@ -480,6 +491,10 @@ public class SRMSimApp extends Application {
         else if (Objects.equals(grainChoiceBox.getValue(),"Cross")) {
             homePane.getChildren().addAll(slitWidthInput.getNodeArr());
             homePane.getChildren().add(crossImage);
+        }
+        else if (Objects.equals(grainChoiceBox.getValue(),"Moon")) {
+            homePane.getChildren().addAll(innerDiameterInput.getNodeArr());
+            homePane.getChildren().addAll(offsetInput.getNodeArr());
         }
     }
 
@@ -507,7 +522,6 @@ public class SRMSimApp extends Application {
                 showExceptionStage("Invalid Tubular Geometry");
             }
         }
-
         else if (Objects.equals(grainChoiceBox.getValue(),"Cross")) {
             Cross newCross = new Cross();
             try{
@@ -529,6 +543,30 @@ public class SRMSimApp extends Application {
                 }
             } catch (Exception e) {
                 showExceptionStage("Invalid Cross Geometry");
+            }
+        }
+        else if (Objects.equals(grainChoiceBox.getValue(),"Moon")) {
+            Moon newMoon = new Moon();
+            try{
+                if (((0.5)*innerDiameterInput.getValue()+offsetInput.getValue()) >= (0.5)*outerDiameterInput.getValue()) {
+                    showExceptionStage("Invalid Moon Geometry\n\nOffset core extends past outer bounds");
+                }
+                else if ((outerDiameterInput.getValue() == 0) || (innerDiameterInput.getValue() == 0) || (grainLengthInput.getValue() == 0)) {
+                    showExceptionStage("Invalid Moon Geometry\n\nLengths cannot be zero");
+                }
+                else {
+                    newMoon.setGrainName(grainNameTF.getText());
+                    newMoon.setInhibitedEnds(inhibitedEndsInput.getValue());
+                    newMoon.setOuterDiameter(outerDiameterInput.getValue());
+                    newMoon.setGrainLength(grainLengthInput.getValue());
+                    newMoon.setInnerDiameter(innerDiameterInput.getValue());
+                    newMoon.setOffset(offsetInput.getValue());
+                    newMoon.runGrainConversion(engUnitToggle.isSelected());
+                    grainListBox.getItems().add(newMoon);
+                    grainListBox.setValue(newMoon);
+                }
+            } catch (Exception e) {
+                showExceptionStage("Invalid Moon Geometry");
             }
         }
     }
@@ -558,7 +596,6 @@ public class SRMSimApp extends Application {
                 showExceptionStage("Invalid Tubular Geometry");
             }
         }
-
         else if (Objects.equals(grainChoiceBox.getValue(),"Cross")) {
             try{
                 if (slitWidthInput.getValue() >= outerDiameterInput.getValue()) {
@@ -575,13 +612,37 @@ public class SRMSimApp extends Application {
                     updateGrain.setGrainLength(grainLengthInput.getValue());
                     updateGrain.setWidth(slitWidthInput.getValue());
                     updateGrain.runGrainConversion(engUnitToggle.isSelected());
-                    grainListBox.getValue().runGrainConversion(engUnitToggle.isSelected());
                     grainListBox.getItems().remove(grainListBox.getValue());
                     grainListBox.getItems().add(updateGrain);
                     grainListBox.setValue(updateGrain);
                 }
             } catch (Exception e) {
                 showExceptionStage("Invalid Cross Geometry");
+            }
+        }
+        else if (Objects.equals(grainChoiceBox.getValue(),"Moon")) {
+            try{
+                if (((0.5)*innerDiameterInput.getValue()+offsetInput.getValue()) >= (0.5)*outerDiameterInput.getValue()) {
+                    showExceptionStage("Invalid Moon Geometry\n\nOffset core extends past outer bounds");
+                }
+                else if ((outerDiameterInput.getValue() == 0) || (innerDiameterInput.getValue() == 0) || (grainLengthInput.getValue() == 0)) {
+                    showExceptionStage("Invalid Moon Geometry\n\nLengths cannot be zero");
+                }
+                else {
+                    Moon updateGrain = new Moon();
+                    updateGrain.setGrainName(grainNameTF.getText());
+                    updateGrain.setInhibitedEnds(inhibitedEndsInput.getValue());
+                    updateGrain.setOuterDiameter(outerDiameterInput.getValue());
+                    updateGrain.setGrainLength(grainLengthInput.getValue());
+                    updateGrain.setInnerDiameter(innerDiameterInput.getValue());
+                    updateGrain.setOffset(offsetInput.getValue());
+                    updateGrain.runGrainConversion(engUnitToggle.isSelected());
+                    grainListBox.getItems().remove(grainListBox.getValue());
+                    grainListBox.getItems().add(updateGrain);
+                    grainListBox.setValue(updateGrain);
+                }
+            } catch (Exception e) {
+                showExceptionStage("Invalid Moon Geometry");
             }
         }
     }
@@ -736,6 +797,12 @@ public class SRMSimApp extends Application {
                 grainChoiceBox.setValue("Cross");
                 assesGrainSelect();
                 slitWidthInput.getInputTF().setText(((Cross) grainListBox.getValue()).getDispSlitWidth(engUnitToggle.isSelected()));
+            }
+            else if (grainListBox.getValue() instanceof  Moon) {
+                grainChoiceBox.setValue("Moon");
+                assesGrainSelect();
+                innerDiameterInput.getInputTF().setText(((Moon) grainListBox.getValue()).getDispInnerDiameter(engUnitToggle.isSelected()));
+                offsetInput.getInputTF().setText(((Moon) grainListBox.getValue()).getDispOffset(engUnitToggle.isSelected()));
             }
         } catch (NullPointerException ignored) {
         }
