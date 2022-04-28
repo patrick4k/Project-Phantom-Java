@@ -66,7 +66,7 @@ public class Moon extends Grain implements Serializable {
             }
             else {
                 double theta = Math.asin((2/d)*(offset-yBar));
-                burnArea = ((Math.PI/2)-theta)*d*l;
+                burnArea = ((Math.PI/2)-theta)*d*l + (2-getInhibitedEnds())*gamma*Math.pow(d,2)/8;
             }
         }
         setBurnArea(burnArea);
@@ -79,24 +79,28 @@ public class Moon extends Grain implements Serializable {
         double Do = getOuterDiameter();
         double d = innerDiameter + 2*regTotal;
         if (0 <= ((Do-d)/2)-offset) {
-            portArea = (Math.PI/4)*(Math.pow(innerDiameter+2*regTotal,2));
+            portArea = (Math.PI/4)*(Math.pow(d,2));
         }
         else if (0 <= ((Do-d)/2)+offset) {
             double yBar = (.5/offset)*(0.25*(Math.pow(Do,2)-Math.pow(d,2))+Math.pow(offset,2));
-            if (yBar-offset > 0) {
-                double theta = Math.asin((2/d)*(yBar-offset));
-                portArea = (Math.PI+2*theta)*Math.pow(d,2)/8;
-                portArea += (4/(d*d))*Math.sin((Math.PI/2)-theta)*Math.cos((Math.PI/2)-theta);
-                portArea += (4.0/3.0)*(1/d)*Math.sin((Math.PI/2)-theta)*(d+2*offset-Do);
+            double gamma;
+
+            if (yBar >= 0) {
+                gamma = Math.PI + 2*Math.asin(2*yBar/Do);
             }
             else {
-                double theta = Math.asin((2/d)*(offset-yBar));
-                portArea = (Math.PI-2*theta)*Math.pow(d,2)/8;
-                portArea += (4/(d*d))*Math.sin((Math.PI/2)+theta)*Math.cos((Math.PI/2)+theta);
-                portArea += (4.0/3.0)*(1/d)*Math.sin((Math.PI/2)+theta)*(d+2*offset-Do);
+                gamma = Math.PI - 2 * Math.asin(-2 * yBar / Do);
             }
+            if (gamma > 2*Math.PI) {
+                gamma = 2*Math.PI;
+            }
+            else if (gamma < 0) {
+                gamma = 0;
+            }
+            System.out.println(gamma/Math.PI);
+            portArea = (2*Math.PI - gamma)*Math.pow(d,2)/8;
         }
-        System.out.println(portArea);
+        //System.out.println(portArea);
         setPortArea(portArea);
     }
 

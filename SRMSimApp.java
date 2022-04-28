@@ -96,7 +96,7 @@ public class SRMSimApp extends Application {
     private final TextField grainNameTF;
     private final ChoiceBox<Grain> grainListBox;
     private final Label grainListLabel, grainNameLabel;
-    private final ImageView tubularImage, crossImage;
+    private final ImageView tubularImage, crossImage, moonImage;
     private final ImageView phantomLogo;
 
     // dotMotor import
@@ -279,6 +279,9 @@ public class SRMSimApp extends Application {
         Image crossImageFile = new Image(new FileInputStream("cross.jpeg"));
         crossImage = new ImageView(crossImageFile);
         formatGrainImage(crossImage);
+        Image moonImageFile = new Image(new FileInputStream("moon.jpeg"));
+        moonImage = new ImageView(moonImageFile);
+        formatGrainImage(moonImage);
         Line[] imageBorder = new Line[4];
         imageBorder[0] = new Line(tubularImage.getLayoutX(),tubularImage.getLayoutY(),
                 tubularImage.getLayoutX()+tubularImage.getFitWidth(),tubularImage.getLayoutY());
@@ -401,8 +404,9 @@ public class SRMSimApp extends Application {
         homePane.getChildren().addAll(burnRateCoeffInput.getNodeArr());
         homePane.getChildren().addAll(burnRateExpInput.getNodeArr());
         homePane.getChildren().addAll(molarMassInput.getNodeArr());
-        homePane.getChildren().addAll(grainChoiceBox,addGrain,removeGrain, updateGrain, grainNameLabel, grainNameTF, grainListBox, grainListLabel, tubularImage, phantomLogo);
         homePane.getChildren().addAll(imageBorder);
+        homePane.getChildren().addAll(grainChoiceBox,addGrain,removeGrain, updateGrain, grainNameLabel, grainNameTF, grainListBox, grainListLabel, tubularImage, phantomLogo);
+
         for (designInput input:batesInputArr) {
             homePane.getChildren().addAll(input.getNodeArr());
         }
@@ -483,7 +487,7 @@ public class SRMSimApp extends Application {
         homePane.getChildren().removeAll(innerDiameterInput.getNodeArr());
         homePane.getChildren().removeAll(slitWidthInput.getNodeArr());
         homePane.getChildren().removeAll(offsetInput.getNodeArr());
-        homePane.getChildren().removeAll(tubularImage,crossImage);
+        homePane.getChildren().removeAll(tubularImage,crossImage,moonImage);
         if (Objects.equals(grainChoiceBox.getValue(),"Tubular")) {
             homePane.getChildren().addAll(innerDiameterInput.getNodeArr());
             homePane.getChildren().add(tubularImage);
@@ -495,6 +499,7 @@ public class SRMSimApp extends Application {
         else if (Objects.equals(grainChoiceBox.getValue(),"Moon")) {
             homePane.getChildren().addAll(innerDiameterInput.getNodeArr());
             homePane.getChildren().addAll(offsetInput.getNodeArr());
+            homePane.getChildren().add(moonImage);
         }
     }
 

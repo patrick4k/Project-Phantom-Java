@@ -88,13 +88,13 @@ public class Motor implements Serializable {
     private final String timeUnits = "s";
 
     // static doubles
-    private double atmPressure;
+    private double atmPressure = 101325;
     private double motorVolume;
     private double cStar;
     private double ISP;
     private double impulse;
     private double maxThrust;
-    private double maxChamberPressure;
+    private double maxChamberPressure = atmPressure;
     private double avgThrust;
     private double burnTime;
     private double initalKn;
@@ -144,12 +144,16 @@ public class Motor implements Serializable {
     }
 
     public void calcRegRate() {
+        /*
         if (this.counter == 1) {
             this.regRate = this.propellant.getBurnRateCoeff()*Math.pow(this.atmPressure, this.propellant.getBurnRateExp());
         }
         else {
             this.regRate = this.propellant.getBurnRateCoeff()*Math.pow(this.chamberPressure, this.propellant.getBurnRateExp());
         }
+
+         */
+        this.regRate = this.propellant.getBurnRateCoeff()*Math.pow(this.chamberPressure, this.propellant.getBurnRateExp());
         this.regRateList.add(this.regRate);
     }
 
