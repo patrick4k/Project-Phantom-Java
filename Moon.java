@@ -1,3 +1,27 @@
+/*
+Name: Patrick Kennedy
+Date: 4/20/22
+
+Moon
+    - This class is an extension of the grain class, moon is a grain shape
+
+Attributes:
+innerDiameter: double
+    - inner diameter of moon grain
+offset: double
+    - offset of inner and outer centers
+
+Methods:
+runPropConversion(Boolean): void
+    - This method converts input values into base SI units which are used for calculations
+    - Will convert english units to base SI and non-base SI units to base SI
+getDisp_________(Boolean): String
+    - Returns display value of attributes, if GUI is in SI units will return SI, if english will return english
+calcBurnArea(double): void
+    - Calculates and updates the instantaneous burn area of the grain as a function of total regression
+calcPortArea(double): void
+    - Calculates and updates the instantaneous port area of the grain as a function of total regression
+ */
 import java.io.Serializable;
 
 public class Moon extends Grain implements Serializable {
@@ -73,7 +97,6 @@ public class Moon extends Grain implements Serializable {
     }
 
     @Override
-    // TODO Something is wrong here // def need to fix
     public void calcPortArea(double regTotal) {
         double portArea = 0;
         double Do = getOuterDiameter();
@@ -97,10 +120,8 @@ public class Moon extends Grain implements Serializable {
             else if (gamma < 0) {
                 gamma = 0;
             }
-            System.out.println(gamma/Math.PI);
             portArea = (2*Math.PI - gamma)*Math.pow(d,2)/8;
         }
-        //System.out.println(portArea);
         setPortArea(portArea);
     }
 
