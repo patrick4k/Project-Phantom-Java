@@ -43,7 +43,6 @@ public class Moon extends Grain implements Serializable {
     }
 
     @Override
-    // TODO Fix inhibited ends area (maybe wait for port area to be complete?)
         public void calcBurnArea(double regTotal) {
         double burnArea = 0;
         double Do = getOuterDiameter();
