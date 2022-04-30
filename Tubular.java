@@ -56,7 +56,7 @@ public class Tubular extends Grain implements Serializable {
     @Override
     public void calcBurnArea(double regTotal) {
         double burnArea;
-        if (regTotal >= (getOuterDiameter()-this.innerDiameter)/2){
+        if ((regTotal >= (getOuterDiameter()-this.innerDiameter)/2) || ((2-getInhibitedEnds())*regTotal > getGrainLength())){
             burnArea = 0;
         }
         else {

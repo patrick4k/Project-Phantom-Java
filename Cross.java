@@ -57,7 +57,7 @@ public class Cross extends Grain implements Serializable {
         double l;
         double y;
         double Do = getOuterDiameter();
-        if (w >= (2.0/3.0)*Do) {
+        if ((w >= (0.5)*Do) || ((2-getInhibitedEnds())*regTotal > getGrainLength())) {
             burnArea = 0;
         }
         else {
@@ -76,7 +76,7 @@ public class Cross extends Grain implements Serializable {
         double l;
         double y;
         double Do = getOuterDiameter();
-        if (w >= (2.0/3.0)*Do) {
+        if (w >= (0.5)*Do) {
             portArea = Math.PI*Do*Do/4;
         }
         else {

@@ -687,6 +687,7 @@ public class SRMSimApp extends Application {
             yArr = motor.getMassFluxList();
             xAxisTitle = motor.getTimeUnits();
             yAxisTitle = motor.getMassFluxUnits();
+
         }
         else if (Objects.equals(plotSelected, "Burn Area vs Time")) {
             xArr = motor.getTimeList();
