@@ -2,6 +2,8 @@
 Name: Patrick Kennedy
 Date: 4/20/22
 
+NOTE: I know static methods are not advised, though I took liberty in using them here as a design choice and convenience
+
 dotMotorIO
     - This class handles the importation and exportation of .motor files
 

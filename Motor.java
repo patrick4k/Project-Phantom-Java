@@ -144,15 +144,6 @@ public class Motor implements Serializable {
     }
 
     public void calcRegRate() {
-        /*
-        if (this.counter == 1) {
-            this.regRate = this.propellant.getBurnRateCoeff()*Math.pow(this.atmPressure, this.propellant.getBurnRateExp());
-        }
-        else {
-            this.regRate = this.propellant.getBurnRateCoeff()*Math.pow(this.chamberPressure, this.propellant.getBurnRateExp());
-        }
-
-         */
         this.regRate = this.propellant.getBurnRateCoeff()*Math.pow(this.chamberPressure, this.propellant.getBurnRateExp());
         this.regRateList.add(this.regRate);
     }
@@ -236,13 +227,12 @@ public class Motor implements Serializable {
     }
 
     public void calcExitPressure() {
-        // Uses bisection method to calculate the exit pressure through finding the root a divergance equation (exitPressureFunc)
+        // Uses bisection method to calculate the exit pressure through finding the root a divergence equation (exitPressureFunc)
         double a = 0;
         double b = 0.99*this.chamberPressure;
         double c = a;
         if (exitPressureFunc(a) * exitPressureFunc(b) >= 0) {
             System.out.println("ERROR: Left or right bound incorrectly assumed");
-
         }
         while ((b-a) >= 1E-3) {
             c = (a+b)/2;
@@ -288,7 +278,7 @@ public class Motor implements Serializable {
         }
     }
 
-    public void runSim() {
+    public void runSim() { // run simulation until no propellant is left
         while ((this.burnArea > 0) || (counter == 1)) {
             this.calcRegRate();
             this.calcRegStep();
@@ -318,7 +308,7 @@ public class Motor implements Serializable {
         simComplete = true;
     }
 
-    public void evaluateMotor() {
+    public void evaluateMotor() { // asses static results
         this.maxThrust = Collections.max(this.getThrustList());
         this.avgThrust = average(this.thrustList);
         this.maxChamberPressure = (1E-6)*Collections.max(this.getChamberPressureList()); // Pa to MPa

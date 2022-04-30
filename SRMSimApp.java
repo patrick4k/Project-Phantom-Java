@@ -1049,7 +1049,7 @@ public class SRMSimApp extends Application {
         borderPane.setCenter(homePane);
         borderPane.setTop(mainMenu);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("SRM Sim");
+        primaryStage.setTitle("SRMSim");
         primaryStage.show();
         primaryStage.setResizable(false);
     }
