@@ -422,7 +422,6 @@ public class SRMSimApp extends Application {
     public void formatGrainImage(ImageView image) {
         image.setFitHeight(100);
         image.setFitWidth(100);
-        image.setPreserveRatio(true);
         image.setLayoutX(grainListBox.getLayoutX() + 210);
         image.setLayoutY(grainListLabel.getLayoutY());
     }
@@ -906,6 +905,7 @@ public class SRMSimApp extends Application {
             assesGrainSelect();
         });
 
+        // try to build motor and run a simulation
         runSimButton.setOnAction(event -> {
             errorStringBuilder = new StringBuilder();
             initializePropellant();
@@ -989,6 +989,7 @@ public class SRMSimApp extends Application {
             setInputUnits();
             changeInputUnits(engUnitToggle.isSelected());
         });
+
         // Import .motor file
         importMotorMI.setOnAction(event -> {
             importStage.close();
