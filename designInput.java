@@ -16,7 +16,6 @@ getNodeArr(): ArrList<Node>
 getInputTF(): TextField
     - Returns the text field for each design input, used for motor creation and importation
  */
-
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
